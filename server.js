@@ -1,34 +1,38 @@
 const express = require('express');
+const colours = require('./dev_tools/consoleColours');
+const Router = require('./backend/router');
 
-// Initialise server variables
-const init = () => {
-    this.app = express()
-    this.port = 3000;
+class Server{
+    // Initalise Server
+    constructor(){
+        // Get environment variables
+        require('dotenv').config();
+        
+        // Create express application
+        this.app = express();
+        this.hostName = process.env.HOST_NAME;
+        this.port = process.env.port
 
-    // Tells the server what view engine to
-    // use when rendering HTML
-    this.app.set('view engine', 'ejs');
+        // Set rendering engine to EJS
+        this.app.set('view engine', 'ejs');
 
-    server.bind(this)();
+        // Initialise router and call runtime
+        this.router = new Router(this.app);
+        this.runtime();
+    }
+
+    // Server runtime
+    runtime(){
+        // Call routes for server
+        this.router.routes.get.bind(this.router)();
+        this.router.routes.post.bind(this.router)();
+
+        // Set server to liten on port
+        this.app.listen(this.port, _=> {
+            console.log(colours.foregroud.green,
+                `Server Started \nConnect too ${this.hostName}:${this.port}`);
+        });
+    }
 }
 
-// Server runtime function
-const server = () => {
-    // listens for actiity on root page
-    // takes request, response
-    this.app.get('/', (req, res) => {
-        console.log(`User connected to root`);
-
-        // Status sends a HTML status code
-        // Render renders HTML and can also
-        // pass an object to access in the ejs code
-        res.status(200)
-        res.render('home', {Text: "Hello World"});
-    });
-
-    this.app.listen(this.port, () => {
-        console.log(`Server Listening on port ${this.port}`);
-    });
-}
-
-init();
+new Server();
