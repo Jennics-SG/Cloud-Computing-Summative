@@ -1,5 +1,5 @@
 const express = require('express');
-const colours = require('./dev_tools/consoleColours');
+// const colours = require('./dev_tools/consoleColours');
 const Router = require('./backend/router');
 
 class Server{
@@ -10,8 +10,8 @@ class Server{
         
         // Create express application
         this.app = express();
-        this.hostName = process.env.HOST_NAME;
-        this.port = process.env.port
+        this.hostName = process.env.HOST_NAME || "localHost";
+        this.port = process.env.port || "8080"
 
         // Set rendering engine to EJS
         this.app.set('view engine', 'ejs');
@@ -29,8 +29,9 @@ class Server{
 
         // Set server to liten on port
         this.app.listen(this.port, _=> {
-            console.log(colours.foregroud.green,
-                `Server Started \nConnect too ${this.hostName}:${this.port}`);
+            console.log(
+                `Server Started \nConnect too ${this.hostName}:${this.port}`
+            );
         });
     }
 }

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/7816b109-4c42-468a-9c41-dae0ee9490f4/resourceGroups/jjhwagly/providers/Microsoft.Web/sites/jjhwagly",
+    "appService.deploySubpath": "."
+}
