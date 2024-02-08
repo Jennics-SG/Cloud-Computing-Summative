@@ -33,6 +33,15 @@ class Router{
         this.app.post('/newuser', (req, res) => {
             console.log(req.body);
             res.sendStatus(200);
+
+            // TODO: Respond invalid status when error
+        })
+
+        this.app.post('/userlogin', (req, res) => {
+            console.log(req.body);
+            res.sendStatus(200);
+
+            // TODO: Respons invalid status when error
         })
     }
 

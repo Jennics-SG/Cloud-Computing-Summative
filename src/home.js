@@ -22,6 +22,10 @@ class onReady{
         // Listener for user signup
         const signupBtn = document.getElementById('signupbutton');
         signupBtn.addEventListener('click', this.validateSignup.bind(this));
+
+        // Listener for user login
+        const loginBtn = document.getElementById('loginButton');
+        loginBtn.addEventListener('click', this.validateLogin.bind(this));
     }
 
     showLogin(){
@@ -35,7 +39,6 @@ class onReady{
     }
 
     validateSignup(){
-        console.log('help')
         const data = {
             name: document.getElementById('nameIpt').value,
             email: document.getElementById('emailIpt').value,
@@ -59,6 +62,28 @@ class onReady{
         }
 
         fetch('../newuser', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
+    validateLogin(){
+        const data = {
+            email: document.getElementById('LIemailIpt').value,
+            pass: document.getElementById('LIpassIpt').value
+        }
+
+        for(const key in data){
+            if(data[key] == ''){
+                this.showUser(`Please enter ${key}`);
+                return;
+            }
+        }
+
+        fetch('../userlogin', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"

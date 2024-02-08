@@ -59,12 +59,13 @@ body{
     padding-bottom: 2%;
 }
 
-#bookbutton{
+button{
+    margin: auto;
     width: 15%;
     border-radius: 25px;
 }
 
-#bookbutton:hover{
+button:hover{
     background-color: #A9A9A9;
 }
 
