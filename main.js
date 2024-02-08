@@ -1,6 +1,8 @@
 const express = require('express');
+const path = require('path');
 // const colours = require('./dev_tools/consoleColours');
 const Router = require('./backend/router');
+const favicon = require('serve-favicon');
 
 class Server{
     // Initalise Server
@@ -15,6 +17,8 @@ class Server{
 
         // Set rendering engine to EJS
         this.app.set('view engine', 'ejs');
+
+        this.app.use(favicon(path.join(__dirname, '/static/favicon.ico')));
 
         // Initialise router and call runtime
         this.router = new Router(this.app);

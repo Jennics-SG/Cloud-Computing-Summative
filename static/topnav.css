@@ -1,7 +1,7 @@
 #header{
     display: flex;
     flex-direction: row;
-    background-color: #1C4E8D;
+    background-color: #ADC6AA;
     overflow: hidden;
     text-align: center;
     position: fixed;
@@ -16,7 +16,7 @@
 }
 
 #header a:hover{
-    background-color: #505F78;
+    background-color: #7d8e7b;
     color: white;
 }
 
@@ -31,17 +31,18 @@
         flex: 45%;
     }
 
-    .home{
-        padding-top: 1%;
-        padding-bottom: 1%;
-        flex: 45%;
-    }
-
     #header img{
-        flex: 2%;
+        flex: 5%;
         max-width: 50px;
         max-height: 50px;
         padding-right: 1%;
+    }
+
+    .login{
+        flex: 5%;
+        margin-top: auto;
+        padding-top: 1%;
+        padding-bottom: 1%;
     }
     
 }
@@ -58,9 +59,5 @@
 
     #header img{
         display: none;
-    }
-
-    .home{
-        flex: 2%;
     }
 }
