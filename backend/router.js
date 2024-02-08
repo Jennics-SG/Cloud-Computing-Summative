@@ -13,8 +13,17 @@ class Router{
 
     routeGet(){
         this.app.get('/', (req, res) => {
-            console.log('user connecting to home')
-            res.render('pages/home', {user: null});
+            // TODO Use cookie to tell if user has account
+            res.redirect('/home/signup');
+        });
+
+        this.app.get('/home', (req, res) => {
+            res.redirect('/home/signup');
+        })
+
+        this.app.get('/home/:display', (req, res) => {
+            console.log('User connected to home');
+            res.render('pages/home', {display: req.display});
         })
 
         this.sendDir(path.join(__dirname, '../static'));
@@ -34,7 +43,6 @@ class Router{
                 res.sendFile(path.join(dir, `${file}`));
             });
         }
-        console.log(this.app._router.stack);
     }
 }
 

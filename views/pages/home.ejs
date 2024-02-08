@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang = "en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewpoint" content="wide=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
-    <!-- Top Nav Bar -->
-    <%- include('../partials/topnav'); %>
-</body>
+    <head>
+        <%- include('../partials/head', 
+        {
+            title: "Home | Wagly",
+            description: "A website to find fellow dog walkers"
+        }) %>
+    </head>
+    
+    <body>
+        <!-- Top Nav Bar -->
+        <%- include('../partials/topnav'); %>
+
+        <div class = "spacer">
+            <!-- this is here to create space between topnav and content-->
+        </div>
+
+        <div class="content">
+            <div class="loginsignupchoice">
+                <a id = "createAccont">Create Account</a>
+                <a id = "login">Login</a>
+            </div>
+        </div>
+    </body>
 </html>

@@ -1,0 +1,43 @@
+body{
+    margin: 0%;
+    background-color: white;
+    color: White;
+    font-family: sans-serif;
+}
+
+.spacer{
+    min-height: 25px;
+}
+
+.content{
+    opacity: 100%;
+    border-radius: 10px;
+    padding: 3%;
+    background-color: #b2b3b4;
+    width: 66%;
+    margin: auto;
+    margin-top: 10%;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+    font-size: 24px;
+}
+
+.loginsignupchoice{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 1%;
+    max-height: 1%;
+}
+
+.loginsignupchoice a{
+    min-height: 1%;
+    max-height: 1%;
+    min-width: 10%;
+    max-width: 10%;
+    padding: 1.5% 10% 1.5% 10%;
+}
+
+.loginsignupchoice a:hover{
+    background-color: #dadadb
+}
