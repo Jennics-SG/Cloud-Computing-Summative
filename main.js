@@ -18,7 +18,11 @@ class Server{
         // Set rendering engine to EJS
         this.app.set('view engine', 'ejs');
 
+        // Favicon Middleware
         this.app.use(favicon(path.join(__dirname, '/static/favicon.ico')));
+
+        // JSON middleware
+        this.app.use(express.json());
 
         // Initialise router and call runtime
         this.router = new Router(this.app);

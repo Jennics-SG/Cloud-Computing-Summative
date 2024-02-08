@@ -29,7 +29,12 @@ class Router{
         this.sendDir(path.join(__dirname, '../static'));
         this.sendDir(path.join(__dirname, '../src'));
     }
-    routePost(){}
+    routePost(){
+        this.app.post('/newuser', (req, res) => {
+            console.log(req.body);
+            res.sendStatus(200);
+        })
+    }
 
     // Send all files in a directory
     // does NOT send subdirectories

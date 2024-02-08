@@ -23,11 +23,40 @@
             </div>
 
             <div id="login">
-                Login
+                <input>
+                <input>
             </div>
             
             <div id="signup">
-                Signup
+                <div class = "entry">
+                    <p>Name</p>
+                    <input type="text" placeholder="John Smith" id="nameIpt">
+                </div>
+                <div class = "entry">
+                    <p>email</p>
+                    <input type="text" placeholder="JohnSmith@email.com" id="emailIpt">
+                </div>                
+                <div class = "break"></div>
+                <div class = "entry">
+                    <p>Password</p>
+                    <input type="password" id="passIpt">
+                </div>
+                <div class = "entry">
+                    <p>Password Confirmation</p>
+                    <input type="password" id="passConfIpt">
+                </div>
+                <div class = "break"></div>
+                <div class = "entry">
+                    <p>Walker or Owner</p>
+                    <select id="typeIpt">
+                        <option value="walker">Walker</option>
+                        <option value="owner">Owner</option>
+                    </select>
+                </div>
+                <div class = "break"></div>
+                <button id="signupbutton">Register</button>
+                <div class = "break"></div>
+                <p style="color: red;" id="showUser"></p>
             </div>
         </div>
     </body>
