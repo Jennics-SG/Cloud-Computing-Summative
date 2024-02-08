@@ -41,3 +41,10 @@ body{
 .loginsignupchoice a:hover{
     background-color: #dadadb
 }
+
+#login{
+    display: none;
+}
+#signup{
+    display: none;
+}

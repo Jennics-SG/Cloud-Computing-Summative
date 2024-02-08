@@ -27,6 +27,7 @@ class Router{
         })
 
         this.sendDir(path.join(__dirname, '../static'));
+        this.sendDir(path.join(__dirname, '../src'));
     }
     routePost(){}
 
