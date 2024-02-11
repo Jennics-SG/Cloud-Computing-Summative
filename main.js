@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
-// const colours = require('./dev_tools/consoleColours');
 const Router = require('./backened/router');
 const Database = require('./backened/Database/database');
 

@@ -1,5 +1,5 @@
-const Database = require('./database')
-const LoginUser = require('./models/loginUser')
+const LoginUser = require('./models/loginUser');
+const Encrypt = require('./encrypt');
 
 class CreateAccount{
     constructor(data){
@@ -32,6 +32,16 @@ class CreateAccount{
 
     // Adds user to database
     async addAccount(data){
+        const last = data.pass;
+
+        console.time("Test Hash");
+        data.pass = await Encrypt.encryptPass(data.pass);
+        console.timeEnd("Test Hash")
+
+        console.time("Test Compare");
+        await Encrypt.validPass(last, data.pass);
+        console.timeEnd("Test Compare");
+
         const newUser = new LoginUser(data);
 
         await newUser.save()
