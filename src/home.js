@@ -47,9 +47,9 @@ class onReady{
         }
 
         // Check all data has value
-        for(const key in data){
-            if(data[key] == ''){
-                this.showUser(`Please enter ${key}`);
+        for(const i in data){
+            if(data[i] == ''){
+                this.showUser(`Please enter ${i}`);
                 return;
             }
         }

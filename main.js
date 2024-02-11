@@ -3,7 +3,7 @@ const path = require('path');
 const favicon = require('serve-favicon');
 // const colours = require('./dev_tools/consoleColours');
 const Router = require('./backened/router');
-const Database = require('./backened/database');
+const Database = require('./backened/Database/database');
 
 class Server{
     // Initalise Server
@@ -36,7 +36,8 @@ class Server{
         this.router.routes.get.bind(this.router)();
         this.router.routes.post.bind(this.router)();
 
-        Database.connect();
+        // Establish Database Connection
+        Database.manager.connect();
 
         // Set server to liten on port
         this.app.listen(this.port, _=> {

@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const LoginUser = require('./models/loginUser')
+const CreateAccount = require('./Database/createAccout');
 
 class Router{
     // Router for the express application
@@ -11,7 +11,6 @@ class Router{
             get: this.routeGet,
             post: this.routePost
         }
-        this.killme();
     }
 
     routeGet(){
@@ -32,12 +31,24 @@ class Router{
         this.sendDir(path.join(__dirname, '../static'));
         this.sendDir(path.join(__dirname, '../src'));
     }
+
     routePost(){
-        this.app.post('/newuser', (req, res) => {
-            console.log(req.body);
+        this.app.post('/newuser', async (req, res) => {
             res.sendStatus(200);
 
-            // TODO: Respond invalid status when error
+            // Add account to database
+            const data = req.body
+            const newUser = new CreateAccount(data);
+
+            if(await newUser.save()){
+                console.log('User Saved');
+                //res.sendStatus(200);
+                return;
+            }
+
+            console.log('Error saving user');
+            //res.sendStatus(418);
+            return;
         })
 
         this.app.post('/userlogin', (req, res) => {
@@ -46,19 +57,6 @@ class Router{
 
             // TODO: Respons invalid status when error
         })
-    }
-
-    // TEST FUNCTION TO PUT USER IN 
-    killme(){
-        const data = {
-            name: "admin",
-            email: "email@email.com",
-            pass: "pass",
-            actType: "Owner"
-        }
-
-        const test = new LoginUser(data);
-        test.save();
     }
 
     // Send all files in a directory
@@ -75,6 +73,18 @@ class Router{
             });
         }
     }
+
+    // // TEST FUNCTION TO PUT USER IN 
+    // addTestUser(){
+    //     const data = {
+    //         name: "hjhj",
+    //         email: "email@email.com",
+    //         pass: "pass",
+    //         actType: "Owner"
+    //     }
+
+    //     new CreateAccount(data);
+    // }
 }
 
 module.exports = Router;
