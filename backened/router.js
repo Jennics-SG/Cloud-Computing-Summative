@@ -1,6 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 
+const LoginUser = require('./models/loginUser')
+
 class Router{
     // Router for the express application
     constructor(app){
@@ -9,6 +11,7 @@ class Router{
             get: this.routeGet,
             post: this.routePost
         }
+        this.killme();
     }
 
     routeGet(){
@@ -43,6 +46,19 @@ class Router{
 
             // TODO: Respons invalid status when error
         })
+    }
+
+    // TEST FUNCTION TO PUT USER IN 
+    killme(){
+        const data = {
+            name: "admin",
+            email: "email@email.com",
+            pass: "pass",
+            actType: "Owner"
+        }
+
+        const test = new LoginUser(data);
+        test.save();
     }
 
     // Send all files in a directory

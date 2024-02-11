@@ -1,8 +1,9 @@
 const express = require('express');
 const path = require('path');
-// const colours = require('./dev_tools/consoleColours');
-const Router = require('./backend/router');
 const favicon = require('serve-favicon');
+// const colours = require('./dev_tools/consoleColours');
+const Router = require('./backened/router');
+const Database = require('./backened/database');
 
 class Server{
     // Initalise Server
@@ -13,7 +14,7 @@ class Server{
         // Create express application
         this.app = express();
         this.hostName = process.env.HOST_NAME || "localHost";
-        this.port = process.env.port || "8080"
+        this.port = process.env.PORT || "8080"
 
         // Set rendering engine to EJS
         this.app.set('view engine', 'ejs');
@@ -34,6 +35,8 @@ class Server{
         // Call routes for server
         this.router.routes.get.bind(this.router)();
         this.router.routes.post.bind(this.router)();
+
+        Database.connect();
 
         // Set server to liten on port
         this.app.listen(this.port, _=> {
