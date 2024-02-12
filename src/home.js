@@ -67,6 +67,10 @@ class onReady{
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(data)
+        })
+        .then((res) => {
+            if(res.status != 200)
+                this.showUser('Error registering');
         });
     }
 

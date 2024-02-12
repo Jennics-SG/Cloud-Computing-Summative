@@ -1,7 +1,8 @@
 const path = require('path');
 const fs = require('fs');
 
-const CreateAccount = require('./Database/createAccout');
+const CreateAccount = require('./database/UserAuth/createAccount');
+const VerifyLogin = require('./database/UserAuth/verifyLogin')
 
 class Router{
     // Router for the express application
@@ -34,28 +35,34 @@ class Router{
 
     routePost(){
         this.app.post('/newuser', async (req, res) => {
-            res.sendStatus(200);
-
             // Add account to database
             const data = req.body
             const newUser = new CreateAccount(data);
 
             if(await newUser.save()){
                 console.log('User Saved');
-                //res.sendStatus(200);
+                res.sendStatus(200);
+
+                // Redirect to user home
+
+                // Set newUser to null to make sure data is cleared
+                newUser = null;
                 return;
             }
 
+            // Set newUser to null to make sure data is cleared
+            newUser = null;
+
+            // Uses 418 bcs teapot
             console.log('Error saving user');
-            //res.sendStatus(418);
+            res.sendStatus(418);
             return;
-        })
+        });
 
-        this.app.post('/userlogin', (req, res) => {
-            console.log(req.body);
-            res.sendStatus(200);
-
-            // TODO: Respons invalid status when error
+        this.app.post('/userlogin', async (req, res) => {
+            const data = req.body;
+            const login = new VerifyLogin(data);
+            login.verify();
         })
     }
 
@@ -74,8 +81,8 @@ class Router{
         }
     }
 
-    // // TEST FUNCTION TO PUT USER IN 
-    // addTestUser(){
+    // TEST FUNCTION TO PUT USER IN 
+    // async addTestUser(){
     //     const data = {
     //         name: "hjhj",
     //         email: "email@email.com",
@@ -83,7 +90,8 @@ class Router{
     //         actType: "Owner"
     //     }
 
-    //     new CreateAccount(data);
+    //     const acc = new CreateAccount(data);
+    //     await acc.save();
     // }
 }
 

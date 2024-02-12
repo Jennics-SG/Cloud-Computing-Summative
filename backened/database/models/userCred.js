@@ -4,25 +4,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const loginUserSchema = new Schema({
-    name: {
+    uuid: {
         type: String,
-        min: 1,
-        max: 15,
-        required: [true, "What do I call you?"]
+        required: [true, "No user ID assigned"]
     },
-    email:{
+    email: {
         type: String,
-        required: [true, "How do I stay in contact"]
+        required: true
     },
     pass: {
         type: String,
         min: 6,
         required: [true, "Gotta authenticate"]
-    },
-    actType: {
-        type: String,
-        required: true
     }
 })
 
-module.exports = mongoose.model("loginUser", loginUserSchema, "Login_Users");
+module.exports = mongoose.model("UserCred", loginUserSchema, "User_Creds");
