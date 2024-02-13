@@ -1,5 +1,13 @@
+/** Name:   WaglyJs.frontend.home.js
+ *  Desc:   All code for the non-user home page
+ *  Author: Jimy Houlbrook
+ *  Date:   13/02/24
+ */
+
+// Class to hold the code
 class onReady{
     constructor(){
+        // Get divs for each tab
         this.login = document.getElementById('login');
         this.signup = document.getElementById('signup');
 
@@ -16,8 +24,8 @@ class onReady{
         const loginTab = document.getElementById('loginTab');
         const signupTab = document.getElementById('signupTab');
 
-        loginTab.addEventListener('click', this.showLogin.bind(this));
-        signupTab.addEventListener('click', this.showSignup.bind(this));
+        loginTab.addEventListener('click', _=> this.changeTab('login'));
+        signupTab.addEventListener('click', _=> this.changeTab('signup'));
 
         // Listener for user signup
         const signupBtn = document.getElementById('signupbutton');
@@ -28,22 +36,21 @@ class onReady{
         loginBtn.addEventListener('click', this.validateLogin.bind(this));
     }
 
-    showLogin(){
-        this.login.style.display = 'flex';
-        this.signup.style.display = 'none';
+    // Change to correct tab
+    changeTab(tab){
+        this.login.style.display = tab == 'login' ?
+            'flex' : 'none';
+        this.signup.style.display = tab == 'signup' ?
+            'flex' : 'none';
     }
 
-    showSignup(){
-        this.login.style.display = 'none';
-        this.signup.style.display = 'flex';
-    }
-
+    // Validate & send signup to server
     validateSignup(){
         const data = {
             name: document.getElementById('nameIpt').value,
             email: document.getElementById('emailIpt').value,
             pass: document.getElementById('passIpt').value,
-            actType: document.getElementById('typeIpt').value,
+            actType: document.getElementById('typeIpt').value
         }
 
         // Check all data has value
@@ -68,18 +75,21 @@ class onReady{
             },
             body: JSON.stringify(data)
         })
+        // Show user error if there is one
         .then((res) => {
             if(res.status != 200)
                 this.showUser('Error registering');
         });
     }
 
+    // Validate login & send to server
     validateLogin(){
         const data = {
             email: document.getElementById('LIemailIpt').value,
             pass: document.getElementById('LIpassIpt').value
         }
 
+        // Check data has a value
         for(const key in data){
             if(data[key] == ''){
                 this.showUser(`Please enter ${key}`);
@@ -87,6 +97,7 @@ class onReady{
             }
         }
 
+        // Should probs do some error handling here, cba
         fetch('../userlogin', {
             method: 'POST',
             headers: {
@@ -96,6 +107,7 @@ class onReady{
         });
     }
 
+    // Show user a message
     showUser(message){
         const textElem = document.getElementById('showUser');
 

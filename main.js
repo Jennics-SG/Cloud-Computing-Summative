@@ -1,9 +1,16 @@
+/** Name:   WaglyJs.backend.main.js
+ *  Desc:   Main script for WaglyJs backend
+ *  Author: Jimy Houlbrook
+ *  Date:   13/02/24
+ */
+
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
 const Router = require('./backened/router');
 const Database = require('./backened/Database/database');
 
+// Class containing server code
 class Server{
     // Initalise Server
     constructor(){

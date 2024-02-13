@@ -1,4 +1,9 @@
-// Connects to the database
+/** Name:   WaglyJs.backend.database.js
+ *  Desc:   Script that connects to the database
+ *  Author: Jimy Houlbrook
+ *  Date:   13/02/24
+ */
+
 const mongoose = require('mongoose');
 require('dotenv');
 
@@ -11,17 +16,14 @@ class Manager{
 
         this.db = mongoose.connection;
 
-        this.db.on('connected', () => {console.log('connected');});
-        this.db.on('open', () => console.log('open'));
-        this.db.on('disconnected', () => console.log('disconnected'));
-        this.db.on('reconnected', () => console.log('reconnected'));
-        this.db.on('disconnecting', () => console.log('disconnecting'));
-        this.db.on('close', () => console.log('close'));
+        // Bunch of stuff to log about the database
+        this.db.on('connected', () => {console.log('Database connected');});
+        this.db.on('open', () => console.log('Database open'));
+        this.db.on('disconnected', () => console.log('Database disconnected'));
+        this.db.on('reconnected', () => console.log('Database reconnected'));
+        this.db.on('disconnecting', () => console.log('Database disconnecting'));
+        this.db.on('close', () => console.log('Database close'));
 
-    }
-
-    static disconnect(){
-        mongoose.connection.close();
     }
 }
 

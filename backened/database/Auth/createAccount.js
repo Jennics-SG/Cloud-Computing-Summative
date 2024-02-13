@@ -1,10 +1,18 @@
+/** Name:   WaglyJs.backend.auth.createAccount.js
+ *  Desc:   Script to verify user login
+ *  Author: Jimy Houlbrook
+ *  Date:   13/02/24
+ */
+
 const UserCred = require('../models/userCred');
 const Account = require('../models/account');
 const Encrypt = require('../encrypt');
 
 const {v4: uuid} = require('uuid');
 
+// Class containing all the logic to save a user to database
 class CreateAccount{
+    // Still hate JS constructors, check verify login for deatails
     constructor(data){
         // Make sure all data exists & convert to string to be safe
         for(let i in data){
@@ -20,10 +28,14 @@ class CreateAccount{
     }
 
     // Save user data into the database
+    // Returns the account UUID if save successful
     async save(){
         // Check that account doesnt exist first
         const users = await this.accountExists(this.data.email);
-        if(users[0]) return false;
+        if(users[0]) return undefined;
+
+        // Wish i did this in TS, wanna use interfaces to
+        // Make sure these objects dont have wrong types
 
         // Account Data
         const account = {
@@ -39,10 +51,12 @@ class CreateAccount{
             email: this.data.email,
             pass: this.data.pass
         }
-        await this.addAccount(account);
+
+        // Save to cred and account db
+        let acc = await this.addAccount(account);
         await this.addCreds(login);
 
-        return true;
+        return acc;
     }
 
     // Finds user in database and returns it
@@ -50,10 +64,11 @@ class CreateAccount{
         return await Account.find({email: email}).exec();
     }
 
-    // Add Account to database
+    // Add Account to database, return acc uuid
     async addAccount(data){
         const acc = new Account(data)
         await acc.save();
+        return acc.uuid
     }
 
     // Adds LoginCred to database
