@@ -12,6 +12,7 @@ const Database = require('./database/database')
 const CreateAccount = require('./database/Auth/createAccount');
 const VerifyLogin = require('./database/Auth/verifyLogin')
 const AddPet = require('./database/addPet');
+const AddJob = require('./database/addJob');
 
 // Router for the express application
 class Router{
@@ -131,7 +132,6 @@ class Router{
         // Return account type
         this.app.post('/api/ownerwalker', async (req, res) => {
             const data = req.body;
-            console.log(data);
 
             const act = await Database.manager.getAccount(data.userid);
 
@@ -170,7 +170,10 @@ class Router{
         })
 
         this.app.post('/api/offerJob', async (req, res) => {
-            console.log(req.body);
+            const data = req.body;
+
+            const job = new AddJob(data);
+            job.save();
         })
     }
 

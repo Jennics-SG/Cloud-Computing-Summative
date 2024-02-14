@@ -52,8 +52,6 @@ class ShowWalkers{
 
     // Offer job to walker
     async offerJob(userID, walkerID){
-        console.log(userID, walkerID)
-
         const response = await fetch('../../api/offerJob', {
             method: 'POST',
             headers: {

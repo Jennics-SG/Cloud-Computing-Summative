@@ -7,6 +7,7 @@
 const PetModel = require('../database/models/pet');
 const AccountModel = require('../database/models/account');
 const CredsModel = require('../database/models/userCred');
+const JobModel = require('../database/models/job')
 
 const mongoose = require('mongoose');
 require('dotenv');
@@ -59,6 +60,14 @@ class Manager{
 
     static async getWalkers(){
         return await AccountModel.find({actType: "walker"});
+    }
+
+    static getJobModel(data){
+        return new JobModel(data);
+    }
+
+    static async getJob(userID, walkerID){
+        return await JobModel.findOne({user: userID, walker: walkerID})
     }
 
 }

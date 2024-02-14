@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const schema = mongoose.Schema;
 
-const JobSchema = new Schema({
+const JobSchema = new schema({
     user: {
         type: String,
         required: true
@@ -10,6 +10,14 @@ const JobSchema = new Schema({
     walker: {
         type: String,
         required: true
+    },
+    accepted:{
+        type: Boolean,
+        required: true
+    },
+    completed: {
+        type: Boolean,
+        require: true
     }
 })
 
