@@ -10,6 +10,13 @@
         <a class = "icon"><img src="/static/favicon.ico"></a>
         <a class = "link">PETS</a>
         <a class = "link">WALKERS</a>
-        <a class = "login">LOGOUT</a>
+        <a class = "login" onclick="logout()">LOGOUT</a>
     </nav>
 <%}%>
+
+<script>
+    function logout(){
+        localStorage.clear();
+        window.location.href = "../../lsu/login"
+    }
+</script>

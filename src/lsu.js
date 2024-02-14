@@ -119,7 +119,7 @@ class onReady{
 
         const userID = await response.json();
         this.putUserinLocal(userID);
-        window.location.href = "../../home";
+        window.location.href = "../../home/owner";
     }
 
     // Validate login & send to server
@@ -145,18 +145,14 @@ class onReady{
             body: JSON.stringify(data)
         });
 
-        switch(response.status){
-            case 418:
-                this.showUser('Account Not Found');
-                return;
-            case 503:
-                this.showUser('Incorrect Password');
-                return;
+        if(response.status != 200){
+            this.showUser('Account information incorrect');r
+            return;
         }
 
         const userID = await response.json();
         this.putUserinLocal(userID);
-        window.location.href = "../../home";
+        window.location.href = "../../home/owner";
     }
 
     // Show user a message

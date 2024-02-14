@@ -1,3 +1,9 @@
+/** Name:   WaglyJs.frontend.submitPet.js
+ *  Desc:   All code for submitting pet to backend
+ *  Author: Jimy Houlbrook
+ *  Date:   14/02/24
+ */
+
 class onReady{
     constructor(){
         // Divs for tabs
@@ -16,6 +22,7 @@ class onReady{
         addDogBtn.addEventListener('click', this.addPet.bind(this));
     }
 
+    // Change tab to correct one
     changeTab(tab){
         this.YourDogs.style.display = tab == 'yourDogs' ?
             'flex' : 'none';
@@ -23,6 +30,7 @@ class onReady{
             'flex' : 'none';
     }
 
+    // Send pet data to backend
     async addPet(){
         // Get owner ID from localstorage
         const user = JSON.parse(localStorage.getItem('userauth'));
@@ -33,8 +41,6 @@ class onReady{
             size: document.getElementById('sizeIpt').value,
             owner: user.userid
         }
-
-        console.log(data);
 
         // Check all data has value
         for(const i in data){

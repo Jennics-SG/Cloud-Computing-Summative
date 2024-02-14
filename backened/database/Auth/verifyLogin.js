@@ -26,6 +26,7 @@ class Login{
     async verify(){
         // Find user account, return undefined if not found
         const account = await this.findUser(this.data.email);
+
         if(!account){
             console.log('Account not found');
             return undefined;
@@ -40,7 +41,8 @@ class Login{
 
     // Returns the user found from the database
     async findUser(email){
-        return await UserCred.findOne({email: email});
+        const accs = await UserCred.find({email: email});
+        return accs[0];
     }
 }
 

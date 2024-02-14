@@ -7,6 +7,9 @@
 const path = require('path');
 const fs = require('fs');
 
+const PetModel = require('./database/models/pet')
+const AccountModel = require('./database/models/account')
+
 const CreateAccount = require('./database/Auth/createAccount');
 const VerifyLogin = require('./database/Auth/verifyLogin')
 const AddPet = require('./database/addPet');
@@ -28,11 +31,11 @@ class Router{
         // Home routes, redirect to /home/:display
         this.app.get('/', (req, res) => {
             // TODO Use cookie to tell if user has account
-            res.redirect('/home/signup');
+            res.redirect('/lsu/signup');
         });
 
         this.app.get('/lsu', (req, res) => {
-            res.redirect('/home/signup');
+            res.redirect('/lsu/signup');
         })
 
         this.app.get('/lsu/:display', (req, res) => {
@@ -40,8 +43,16 @@ class Router{
             res.render('pages/lsu', {display: req.display});
         })
 
-        this.app.get('/home', (req, res) => {
-            res.render('pages/home');
+        this.app.get('/home/', (req, res) => {
+            res.redirect('/home/owner');
+        })
+
+        this.app.get('/home/owner', (req, res) => {
+            res.render('pages/owner');
+        })
+        
+        this.app.get('/home/walker', (req, res) =>{
+            res.render('pages/walker')
         })
 
         // Send directories with files
@@ -95,10 +106,12 @@ class Router{
             return;
         });
     
+        // Validate login data from localStorage
+        // Returns true if date in localstorage is before current date
         this.app.post('/api/validateLocalAuth', async (req, res) => {
             const data = req.body;
-            // Compare date to local date
 
+            // Compare date to local date
             const dateNow = new Date();
             dateNow.setTime(dateNow.getTime());
 
@@ -108,12 +121,23 @@ class Router{
             res.send(JSON.stringify(dateNow.getTime() < authDate.getTime()));
         })
 
+        this.app.post('/api/ownerwalker', async (req, res) => {
+            const data = req.body;
+
+            const act = await this.getAct(data.userid);
+
+            res.set('Content-Type', 'application/JSON')
+            res.send(JSON.stringify(act.actType))
+        })
+
+        // Add a pet to the database
         this.app.post('/api/addPet', async (req, res) => {
             const data = req.body;
 
             const pet = new AddPet(data);
             const petID = await pet.save();
-            
+        
+            // If pet add was unseccessful respond 503
             if(!petID){
                 res.sendStatus(503);
                 return;
@@ -121,6 +145,21 @@ class Router{
 
             res.sendStatus(200);
         })
+
+        this.app.post('/api/getPets', async (req, res) => {
+            const data = req.body;
+
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify(await this.getPets(data.userid)))
+        });
+    }
+
+    async getAct(userID){
+        return await AccountModel.findOne({uuid: userID})
+    }
+
+    async getPets(userID){
+        return await PetModel.find({owner: userID})
     }
 
     // Send all files in a directory
