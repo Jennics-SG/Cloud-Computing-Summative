@@ -30,13 +30,17 @@ class Router{
             res.redirect('/home/signup');
         });
 
-        this.app.get('/home', (req, res) => {
+        this.app.get('/lsu', (req, res) => {
             res.redirect('/home/signup');
         })
 
-        this.app.get('/home/:display', (req, res) => {
+        this.app.get('/lsu/:display', (req, res) => {
             console.log('User connected to home');
-            res.render('pages/home', {display: req.display});
+            res.render('pages/lsu', {display: req.display});
+        })
+
+        this.app.get('/home', (req, res) => {
+            res.render('pages/home');
         })
 
         // Send directories with files
@@ -47,7 +51,7 @@ class Router{
     // All post routes
     routePost(){
         // Sign user up to database
-        this.app.post('/newuser', async (req, res) => {
+        this.app.post('/api/newuser', async (req, res) => {
             const data = req.body
 
             // Using await to make sure func finished before continuing
@@ -62,14 +66,14 @@ class Router{
                 return;
             }
 
-            // Redirect user to userhome if acc made
-            console.log('User Saved', accountID);
-            res.sendStatus(200);
+            // Send user ID to frontend
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify({ID: accountID}))
             return;
         });
 
         // Log user in to service
-        this.app.post('/userlogin', async (req, res) => {
+        this.app.post('/api/userlogin', async (req, res) => {
             const data = req.body;
 
             // Using await to make sure func finished before continuing
@@ -83,10 +87,24 @@ class Router{
                 return;
             }
 
-            // Redirect user to userhome if acc found
-            console.log('Account Found', accountID);
-            res.sendStatus(200);
+            // Send account ID to frontend
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify({ID: accountID}));;
+
             return;
+        });
+    
+        this.app.post('/api/validateLocalAuth', async (req, res) => {
+            const data = req.body;
+            // Compare date to local date
+
+            const dateNow = new Date();
+            dateNow.setTime(dateNow.getTime());
+
+            const authDate = new Date(data.expires)
+
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify(dateNow.getTime() < authDate.getTime()));
         })
     }
 

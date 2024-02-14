@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <%- include('../partials/head', 
+        {
+            title: "Home | Wagly",
+            description: "A website to find fellow dog walkers"
+        }) %>
+        <link rel = "stylesheet" type="text/css" href="/static/lsu.css"
+    </head>
+    
+    <body>
+        <!-- Top Nav Bar -->
+        <%- include('../partials/topnav', {user: null}); %>
+
+        <div class = "spacer">
+            <!-- this is here to create space between topnav and content-->
+        </div>
+
+        <div class="content">
+            <div class="loginsignupchoice">
+                <a id = "signupTab">Create Account</a>
+                <a id = "loginTab">Login</a>
+            </div>
+
+            <div id="login">
+                <div class = "entry">
+                    <p>Email</p>
+                    <input type="text" placeholder="email@email.com" id="LIemailIpt">
+                </div>
+                <div class = "break"></div>
+                <div class = "entry">
+                    <p>Password</p>
+                    <input type="password" id="LIpassIpt">
+                </div>
+                <div class = "break"></div>
+                <button id="loginButton">Log In</button>
+            </div>
+            
+            <div id="signup">
+                <div class = "entry">
+                    <p>Name</p>
+                    <input type="text" placeholder="John Smith" id="nameIpt">
+                </div>
+                <div class = "entry">
+                    <p>email</p>
+                    <input type="text" placeholder="JohnSmith@email.com" id="emailIpt">
+                </div>                
+                <div class = "break"></div>
+                <div class = "entry">
+                    <p>Password</p>
+                    <input type="password" id="passIpt">
+                </div>
+                <div class = "entry">
+                    <p>Password Confirmation</p>
+                    <input type="password" id="passConfIpt">
+                </div>
+                <div class = "break"></div>
+                <div class = "entry">
+                    <p>Walker or Owner</p>
+                    <select id="typeIpt">
+                        <option value="walker">Walker</option>
+                        <option value="owner">Owner</option>
+                    </select>
+                </div>
+                <div class = "break"></div>
+                <button id="signupbutton">Register</button>
+                <div class = "break"></div>
+            </div>
+            <p style="color: red;" id="showUser"></p>
+        </div>
+    </body>
+
+    <script src="../static/lsu.js"></script>
+</html>

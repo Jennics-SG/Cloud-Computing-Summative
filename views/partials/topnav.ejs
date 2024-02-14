@@ -1,8 +1,15 @@
 <link rel = "stylesheet" type = "text/css" href = "/static/topnav.css"/>
 
-<nav id = "header">
-    <a href = "/home" class = "icon"><img src="/static/favicon.ico"></a>
-    <a class = "link">ABOUT US</a>
-    <a class = "link">BOOK NOW</a>
-    <a class = "login">LOGIN / SIGNUP</a>
-</nav>
+<% if(locals.user == null) {%>
+    <nav id = "header">
+        <a class = "icon"><img src="/static/favicon.ico"></a>
+        <a class = "login">LOGIN / SIGNUP</a>
+    </nav>
+<%} else if (locals.user == "Owner"){%>
+    <nav id = "header">
+        <a class = "icon"><img src="/static/favicon.ico"></a>
+        <a class = "link">PETS</a>
+        <a class = "link">WALKERS</a>
+        <a class = "login">LOGOUT</a>
+    </nav>
+<%}%>

@@ -27,7 +27,7 @@ class Login{
         // Find user account, return undefined if not found
         const account = await this.findUser(this.data.email);
         if(!account){
-            console.log('Account  not found');
+            console.log('Account not found');
             return undefined;
         }
 
@@ -40,7 +40,7 @@ class Login{
 
     // Returns the user found from the database
     async findUser(email){
-        return await UserCred.findOne({email: email}).exec();
+        return await UserCred.findOne({email: email});
     }
 }
 
