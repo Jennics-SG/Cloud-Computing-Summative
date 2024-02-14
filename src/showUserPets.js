@@ -1,28 +1,11 @@
-// Kill me
-
 class showUserPets{
     constructor(){
-        // Get user from localstorage
-        this.user = JSON.parse(localStorage.getItem('userauth'));
-
         // Get div for UI elements
         this.div = document.getElementById('dogs');
         this.init();
     }
 
     async init(){
-        // Ensure user is logged in
-        if(!this.user){
-            window.location.href = "../../lsu/login"
-            return;
-        }
-
-        // Redirect user if logged in to walker account
-        if(await this.accountType() != "owner"){
-            window.location.href = "../home/walker";
-            return;
-        }
-
         this.dogs = await this.getDogs();
         for(const dog of this.dogs){
             const elem = this.makeUIElem(dog);
@@ -30,21 +13,9 @@ class showUserPets{
         }
     }
 
-    async accountType(){
-        const response = await fetch('../api/ownerwalker', {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/JSON"
-            },
-            body: JSON.stringify(this.user)
-        });
-
-        return await response.json();
-    }
-
     async getDogs(){
         // Get object of dogs from backend
-        const response = await fetch('../api/getPets', {
+        const response = await fetch('../../api/getPets', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/JSON"
