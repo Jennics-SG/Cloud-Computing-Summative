@@ -20,8 +20,6 @@ class Redirect{
 
         // Redirect user based on account type & url
         const accountType = await this.getAccountType();
-        console.log(accountType);
-
         switch(accountType){
             case "owner":
                 if(this.url.includes('walker'))
