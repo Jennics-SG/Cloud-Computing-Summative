@@ -1,3 +1,9 @@
+/** Name:   WaglyJs.frontend.showUserPets.js
+ *  Desc:   Show the pets currently registered to user
+ *  Author: Jimy Houlbrook
+ *  Date:   14/02/24
+ */
+
 class showUserPets{
     constructor(){
         // Get user from localstorage
@@ -8,6 +14,7 @@ class showUserPets{
         this.init();
     }
 
+    // Get dogs and create UI elem for each
     async init(){
         this.dogs = await this.getDogs();
         for(const dog of this.dogs){
@@ -16,6 +23,7 @@ class showUserPets{
         }
     }
 
+    // Get dogs from database
     async getDogs(){
         // Get object of dogs from backend
         const response = await fetch('../../api/getPets', {
@@ -29,6 +37,7 @@ class showUserPets{
         return await response.json();
     }
 
+    // Make UI elem to hold dog
     makeUIElem(dog){
         const cont = document.createElement('label');
         cont.id = "cont";

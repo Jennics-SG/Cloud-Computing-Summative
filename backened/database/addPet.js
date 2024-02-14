@@ -1,3 +1,9 @@
+/** Name:   WaglyJs.backend.addPet.js
+ *  Desc:   Add new pet to the database
+ *  Author: Jimy Houlbrook
+ *  Date:   14/02/24
+ */
+
 const Database = require('./database')
 
 const {v4: uuid} = require('uuid');

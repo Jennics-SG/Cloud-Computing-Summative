@@ -128,8 +128,10 @@ class Router{
             res.send(JSON.stringify(dateNow.getTime() < authDate.getTime()));
         })
 
+        // Return account type
         this.app.post('/api/ownerwalker', async (req, res) => {
             const data = req.body;
+            console.log(data);
 
             const act = await Database.manager.getAccount(data.userid);
 
@@ -153,6 +155,7 @@ class Router{
             res.sendStatus(200);
         })
 
+        // Return pets registered to User
         this.app.post('/api/getPets', async (req, res) => {
             const data = req.body;
 
@@ -160,9 +163,14 @@ class Router{
             res.send(JSON.stringify(await Database.manager.getPets(data.userid)))
         });
 
+        // Get list of walkers
         this.app.post('/api/getWalkers', async (req, res) => {
             res.set('Content-Type', 'application/JSON');
             res.send(JSON.stringify(await Database.manager.getWalkers()));
+        })
+
+        this.app.post('/api/offerJob', async (req, res) => {
+            console.log(req.body);
         })
     }
 

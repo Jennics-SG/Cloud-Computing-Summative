@@ -4,7 +4,6 @@
  *  Date:   13/02/24
  */
 
-// Using absolute paths with models bcs they hate relative paths
 const PetModel = require('../database/models/pet');
 const AccountModel = require('../database/models/account');
 const CredsModel = require('../database/models/userCred');

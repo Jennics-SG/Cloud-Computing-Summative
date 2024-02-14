@@ -1,3 +1,8 @@
+/** Name:   WaglyJs.frontend.staticRedirect.js
+ *  Desc:   Redirect users to relevant sites
+ *  Author: Jimy Houlbrook
+ *  Date:   14/02/24
+ */
 class Redirect{
     constructor(){
         // Get user from localstorage
@@ -32,8 +37,9 @@ class Redirect{
         }
     }
 
-
+    // Get account type from database
     async getAccountType(){
+        if(!this.user) return;
         const response = await fetch('../../api/ownerwalker', {
             method: 'POST',
             headers: {

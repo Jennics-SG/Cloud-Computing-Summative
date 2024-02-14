@@ -7,10 +7,6 @@
 // Class to hold the code
 class onReady{
     constructor(){
-
-        // Check if user should be logged in
-        // this.isUserLoggedIn()
-
         // Get divs for each tab
         this.login = document.getElementById('login');
         this.signup = document.getElementById('signup');
@@ -38,38 +34,6 @@ class onReady{
         // Listener for user login
         const loginBtn = document.getElementById('loginButton');
         loginBtn.addEventListener('click', this.validateLogin.bind(this));
-    }
-
-    async isUserLoggedIn(){
-        // Read local storage for auth
-        const userAuth = localStorage.getItem('userauth');
-
-        // If local doesnt exist do nothing 
-        if(!userAuth || userAuth == null)
-            return;
-
-        // Check auth date with server time to see if login still valid
-        const response = await fetch('../api/validateLocalAuth', {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: userAuth
-        });
-
-        // Was originally gonna return this but bcs of constructors
-        // being sync it just has a promise
-        // Basically, constructors really suck
-        if(!await response.json()){
-            // Clear old auth obj from local storage
-            localStorage.clear();
-
-            return;
-        }
-
-        // Redirect to user home
-        console.log('User logged in');
-        window.location.href = "../../home";
     }
 
     // Change to correct tab
