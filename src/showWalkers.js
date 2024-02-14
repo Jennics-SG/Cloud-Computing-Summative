@@ -33,7 +33,7 @@ class ShowWalkers{
         cont.appendChild(name);
 
         const contact = document.createElement('button');
-        contact.innerHTML = "Contact";
+        contact.innerHTML = "Make Offer";
         cont.appendChild(contact);
 
         return cont
