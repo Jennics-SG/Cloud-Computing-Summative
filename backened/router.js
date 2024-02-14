@@ -7,8 +7,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const PetModel = require('./database/models/pet')
-const AccountModel = require('./database/models/account')
+const Database = require('./database/database')
 
 const CreateAccount = require('./database/Auth/createAccount');
 const VerifyLogin = require('./database/Auth/verifyLogin')
@@ -132,7 +131,7 @@ class Router{
         this.app.post('/api/ownerwalker', async (req, res) => {
             const data = req.body;
 
-            const act = await this.getAct(data.userid);
+            const act = await Database.manager.getAccount(data.userid);
 
             res.set('Content-Type', 'application/JSON')
             res.send(JSON.stringify(act.actType))
@@ -158,16 +157,13 @@ class Router{
             const data = req.body;
 
             res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify(await this.getPets(data.userid)))
+            res.send(JSON.stringify(await Database.manager.getPets(data.userid)))
         });
-    }
 
-    async getAct(userID){
-        return await AccountModel.findOne({uuid: userID})
-    }
-
-    async getPets(userID){
-        return await PetModel.find({owner: userID})
+        this.app.post('/api/getWalkers', async (req, res) => {
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify(await Database.manager.getWalkers()));
+        })
     }
 
     // Send all files in a directory

@@ -1,5 +1,8 @@
 class showUserPets{
     constructor(){
+        // Get user from localstorage
+        this.user = JSON.parse(localStorage.getItem('userauth'));
+        
         // Get div for UI elements
         this.div = document.getElementById('dogs');
         this.init();

@@ -51,7 +51,7 @@ class onReady{
         }
 
         // Send to backend with fetch request
-        const response = await fetch('../api/addPet', {
+        const response = await fetch('../../api/addPet', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/JSON"

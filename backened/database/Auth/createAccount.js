@@ -4,8 +4,7 @@
  *  Date:   13/02/24
  */
 
-const UserCred = require('../models/userCred');
-const AccountModel = require('../models/account');
+const Database = require('../database');
 const Encrypt = require('../encrypt');
 
 const {v4: uuid} = require('uuid');
@@ -61,12 +60,12 @@ class Account{
 
     // Finds user in database and returns it
     async accountExists(email){
-        return await AccountModel.find({email: email}).exec();
+        return await Database.manager.getAccountEmail(email)
     }
 
     // Add Account to database, return acc uuid
     async addAccount(data){
-        const acc = new AccountModel(data)
+        const acc = Database.manager.getAccountModel(data);
         await acc.save();
         return acc.uuid
     }
@@ -78,7 +77,7 @@ class Account{
         // Encrypt pass
         data.pass = await Encrypt.encryptPass(data.pass);
 
-        const cred = new UserCred(data);
+        const cred = Database.manager.getCredsModel(data);
         await cred.save()
     }
 }
