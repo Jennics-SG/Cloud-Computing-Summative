@@ -9,6 +9,7 @@ const fs = require('fs');
 
 const CreateAccount = require('./database/Auth/createAccount');
 const VerifyLogin = require('./database/Auth/verifyLogin')
+const AddPet = require('./database/addPet');
 
 // Router for the express application
 class Router{
@@ -101,10 +102,24 @@ class Router{
             const dateNow = new Date();
             dateNow.setTime(dateNow.getTime());
 
-            const authDate = new Date(data.expires)
+            const authDate = new Date(data.expires);
 
             res.set('Content-Type', 'application/JSON');
             res.send(JSON.stringify(dateNow.getTime() < authDate.getTime()));
+        })
+
+        this.app.post('/api/addPet', async (req, res) => {
+            const data = req.body;
+
+            const pet = new AddPet(data);
+            const petID = await pet.save();
+            
+            if(!petID){
+                res.sendStatus(503);
+                return;
+            }
+
+            res.sendStatus(200);
         })
     }
 

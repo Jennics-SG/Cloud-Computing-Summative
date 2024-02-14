@@ -6,6 +6,7 @@
             title: "Home | Wagly",
             description: "A website to find fellow dog walkers"
         }) %>
+        <link rel = "stylesheet" type="text/css" href="/static/home.css"
     </head>
     
     <body>
@@ -16,10 +17,30 @@
         <div class="spacer"></div>
 
         <div class="content">
-            <div class = "Your Dogs">
+            <div id = "YourDogs">
                 <h2 class = "title">Your Dogs</h2>
 
-                <button id = "AddPet"></button>
+                <button id = "showAddPet">Add Dog</button>
+            </div>
+            <div id = "AddPet">
+                <h2 class = "title">Add Dog</h2>
+
+                <div class = "entry">
+                    <p>Name</p>
+                    <input type="text" placeholder="Max" id="dogNameIpt">
+                </div>
+                <div class="entry">
+                    <p>Size</p>
+                    <select id="sizeIpt">
+                        <option value="s">Small</option>
+                        <option value="m">Medium</option>
+                        <option value="l">Large</option>
+                    </select>
+                </div>
+                <div class="break"></div>
+                <button id="addDogBtn">Add Dog</button>
+                <button id="cancel">Cancel</button>
+                <p style="color: red;" id="showUser"></p>
             </div>
         </div>
     </body>

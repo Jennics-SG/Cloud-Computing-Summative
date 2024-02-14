@@ -5,13 +5,13 @@
  */
 
 const UserCred = require('../models/userCred');
-const Account = require('../models/account');
+const AccountModel = require('../models/account');
 const Encrypt = require('../encrypt');
 
 const {v4: uuid} = require('uuid');
 
 // Class containing all the logic to save a user to database
-class CreateAccount{
+class Account{
     // Still hate JS constructors, check verify login for deatails
     constructor(data){
         // Make sure all data exists & convert to string to be safe
@@ -61,12 +61,12 @@ class CreateAccount{
 
     // Finds user in database and returns it
     async accountExists(email){
-        return await Account.find({email: email}).exec();
+        return await AccountModel.find({email: email}).exec();
     }
 
     // Add Account to database, return acc uuid
     async addAccount(data){
-        const acc = new Account(data)
+        const acc = new AccountModel(data)
         await acc.save();
         return acc.uuid
     }
@@ -81,4 +81,4 @@ class CreateAccount{
     }
 }
 
-module.exports = CreateAccount;
+module.exports = Account;

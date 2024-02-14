@@ -1,5 +1,5 @@
-/** Name:   WaglyJs.frontend.home.js
- *  Desc:   All code for the non-user home page
+/** Name:   WaglyJs.frontend.lsu.js
+ *  Desc:   All code for the login/signup page
  *  Author: Jimy Houlbrook
  *  Date:   13/02/24
  */

@@ -1,0 +1,9 @@
+#YourDogs{
+    display: flex;
+    flex-direction: column;
+}
+
+#AddPet{
+    display: none;
+    flex-direction: column;
+}
