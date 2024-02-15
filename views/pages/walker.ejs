@@ -6,23 +6,18 @@
             title: "Home | Wagly",
             description: "A website to find fellow dog walkers"
         }) %>
-        <link rel = "stylesheet" type="text/css" href="/static/home.css"
     </head>
     
     <body>
         <!-- Top Nav Bar -->
-        <%- include('../partials/topnav', {user: "Owner"}); %>
+        <%- include('../partials/topnav', {user: "Walker"}); %>
 
         <!-- Spacer to make space init -->
         <div class="spacer"></div>
 
         <div class="content">
-            <h2 class = "title">Find Walkers</h2>
-
-            <div id="jobs">
-                
-            </div>
+            <div id="jobs"></div>
+            <div id="offers"></div>
         </div>
     </body>
-    <script src="../../static/walkers.js"></script>
 </html>

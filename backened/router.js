@@ -60,7 +60,7 @@ class Router{
         })
         
         this.app.get('/home/walker', (req, res) =>{
-            res.render('pages/walker')
+            res.render('pages/walker');
         })
 
         // Send directories with files

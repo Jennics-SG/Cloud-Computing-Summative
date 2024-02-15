@@ -110,7 +110,7 @@ class onReady{
         });
 
         if(response.status != 200){
-            this.showUser('Account information incorrect');r
+            this.showUser('Account information incorrect');
             return;
         }
 

@@ -1,0 +1,9 @@
+#jobs{
+    display: flex;
+    flex-direction: row;
+}
+
+#offers{
+    display: none;
+    flex-direction: row;
+}
