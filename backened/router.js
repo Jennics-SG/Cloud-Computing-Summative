@@ -167,14 +167,21 @@ class Router{
         this.app.post('/api/getWalkers', async (req, res) => {
             res.set('Content-Type', 'application/JSON');
             res.send(JSON.stringify(await Database.manager.getWalkers()));
-        })
+        });
 
+        // Ofer job from owner to walker
         this.app.post('/api/offerJob', async (req, res) => {
             const data = req.body;
 
             const job = new AddJob(data);
             job.save();
-        })
+        });
+
+        // Get jobs linked to user
+        this.app.post('/api/getJobs', async (req, res) => {
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify(await Database.manager.getWalkerJobs(req.body.userID)));
+        });
     }
 
     // Send all files in a directory

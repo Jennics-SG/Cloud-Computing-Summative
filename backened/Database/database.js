@@ -70,6 +70,9 @@ class Manager{
         return await JobModel.findOne({user: userID, walker: walkerID})
     }
 
+    static async getWalkerJobs(walkerID){
+        return await JobModel.find({walker: walkerID}); 
+    }
 }
 
 module.exports.manager = Manager

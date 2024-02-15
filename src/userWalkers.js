@@ -14,8 +14,8 @@ class ShowWalkers{
 
     // Get walkers and create UI elem for each
     async init(){
-        this.walkers = await this.getWalkers();
-        for(const walker of this.walkers){
+        const walkers = await this.getWalkers();
+        for(const walker of walkers){
             const elem = this.makeUIElem(walker);
             this.div.append(elem.cont);
         }

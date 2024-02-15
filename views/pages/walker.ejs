@@ -2,10 +2,11 @@
 <html lang = "en">
     <head>
         <%- include('../partials/head', 
-        {
+            {
             title: "Home | Wagly",
-            description: "A website to find fellow dog walkers"
+                description: "A website to find fellow dog walkers"
         }) %>
+        <link rel="stylesheet" type="text/css" href="/static/walker.css">
     </head>
     
     <body>
@@ -16,8 +17,13 @@
         <div class="spacer"></div>
 
         <div class="content">
-            <div id="jobs"></div>
-            <div id="offers"></div>
+            <div id="jobs">
+                <h2>Current Jobs</h2>
+            </div>
+            <div id="offers">
+                <h2>Job Offers</h2>
+            </div>
         </div>
     </body>
+    <script src="/static/walker.js"></script>
 </html>

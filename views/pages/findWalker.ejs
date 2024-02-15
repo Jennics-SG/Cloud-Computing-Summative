@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <%- include('../partials/head', 
+        {
+            title: "Home | Wagly",
+            description: "A website to find fellow dog walkers"
+        }) %>
+    </head>
+    
+    <body>
+        <!-- Top Nav Bar -->
+        <%- include('../partials/topnav', {user: "Owner"}); %>
+
+        <!-- Spacer to make space init -->
+        <div class="spacer"></div>
+
+        <div class="content">
+            <h2 class = "title">Find Walkers</h2>
+
+            <div id="jobs">
+                
+            </div>
+        </div>
+    </body>
+    <script src="../../static/userWalkers.js"></script>
+</html>
