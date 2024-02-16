@@ -12,6 +12,8 @@ const JobModel = require('../database/models/job')
 const mongoose = require('mongoose');
 require('dotenv');
 
+// TODO go through and return from funcs early if param missing
+
 class Manager{
     static connect(){
         const mongoDB = process.env.CONNECT;
@@ -68,6 +70,11 @@ class Manager{
 
     static async getJob(userID, walkerID){
         return await JobModel.findOne({user: userID, walker: walkerID})
+    }
+
+    static async removeJob(userID, walkerID){
+        console.log(userID, walkerID);
+        return await JobModel.deleteOne({user: userID, walker: walkerID});
     }
 
     static async getWalkerJobs(walkerID){

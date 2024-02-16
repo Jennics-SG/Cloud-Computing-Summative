@@ -182,6 +182,66 @@ class Router{
             res.set('Content-Type', 'application/JSON');
             res.send(JSON.stringify(await Database.manager.getWalkerJobs(req.body.userID)));
         });
+
+        // Gets details important to job from user
+        // Such as amount of pets registered & largest dog
+        this.app.post('/api/getJobDetails', async (req, res) => {
+            const data = req.body;
+
+            const owner = await Database.manager.getAccount(data.ownerID);
+
+            const pets = await Database.manager.getPets(data.ownerID);
+            
+            // Get largest pet registered to user
+            let largest = 0;
+
+            pets.forEach((pet) => {
+                // No need to check for largest if its already set
+                if(largest == 3) return
+
+                // change letter code for number
+                if(pet.size == "s") pet.size = 1;
+                if(pet.size == "m") pet.size = 2;
+                if(pet.size == "l") pet.size = 3;
+
+                if(largest < pet.size) largest = pet.size;
+            });
+
+            // Change largest back to letter
+            const sizes = ["s", "m", "l"];
+            largest = sizes[largest - 1];
+
+            const jobDetails = {
+                name: owner.name,
+                pets: pets.length,
+                largest: largest
+            }
+
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify(jobDetails));
+        });
+
+        this.app.post('/api/acceptJob', async (req, res) => {
+            const data = req.body;
+            
+            // Find job
+            const job = await Database.manager.getJob(data.userID, data.ownerID);
+            
+            // set accepted to true
+            job.accepted = true;
+
+            // Save job
+            //await job.save();
+            res.sendStatus(200);
+        });
+
+        this.app.post('/api/removeJob', async (req, res) => {
+            const data = req.body;
+
+            console.log(await Database.manager.removeJob(data.userID, data.walkerID));
+
+            res.sendStatus(200);
+        })
     }
 
     // Send all files in a directory

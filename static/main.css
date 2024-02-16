@@ -25,12 +25,6 @@ body{
     justify-content: center;
 }
 
-#jobs{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
 button{
     margin: auto;
     width: 15%;
