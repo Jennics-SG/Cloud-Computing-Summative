@@ -5,6 +5,7 @@
  */
 
 const express = require('express');
+const cookie = require('cookie-parser')
 const path = require('path');
 const favicon = require('serve-favicon');
 const Router = require('./backened/router');
@@ -24,6 +25,7 @@ class Server{
 
         // Set rendering engine to EJS
         this.app.set('view engine', 'ejs');
+        this.app.use(cookie())
 
         // Favicon Middleware
         this.app.use(favicon(path.join(__dirname, '/static/favicon.ico')));

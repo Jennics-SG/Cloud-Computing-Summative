@@ -82,8 +82,7 @@ class onReady{
         }
 
         const userID = await response.json();
-        this.putUserinLocal(userID);
-        window.location.href = "../../home/owner";
+        window.location.href = "./login";
     }
 
     // Validate login & send to server
@@ -114,8 +113,9 @@ class onReady{
             return;
         }
 
-        const userID = await response.json();
-        this.putUserinLocal(userID);
+        const userData = await response.json();
+        
+        this.getTokens(userData);
         window.location.href = "../../home/owner";
     }
 
@@ -128,20 +128,20 @@ class onReady{
     }
 
     // Put user auth in local storage
-    putUserinLocal(userID){
+    async getTokens(userData){
         // Clear local just to be safe
         localStorage.clear();
-
-        // Create expiry date
-        const date = new Date();
-        date.setTime(date.getTime() + (1*24*60*60*1000));
         
-        const data = {
-            userid: userID.ID,
-            expires: date.toUTCString()
-        };
+        // Get Tokens
+        const response = await fetch('../api/createTokens', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/JSON',
+            },
+            body: JSON.stringify({userData})
+        });
 
-        localStorage.setItem('userauth', JSON.stringify(data));
+        localStorage.setItem('jwt', JSON.stringify(await response.json()));
     }
 }
 

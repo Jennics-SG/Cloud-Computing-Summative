@@ -13,12 +13,16 @@ const CreateAccount = require('./database/Auth/createAccount');
 const VerifyLogin = require('./database/Auth/verifyLogin')
 const AddPet = require('./database/addPet');
 const AddJob = require('./database/addJob');
+const Auth = require('./auth')
+const JWT = require('./jwt')
+
+require('dotenv');
 
 // Router for the express application
 class Router{
     constructor(app){
         this.app = app;
-
+        
         // Object to hold the routing functions
         this.routes = {
             get: this.routeGet,
@@ -51,15 +55,16 @@ class Router{
             res.redirect('/home/owner/findWalk')
         })
 
-        this.app.get('/home/owner/findWalk', (req, res) => {
+        this.app.get('/home/owner/findWalk', Auth.verify, (req, res) => {
+            console.log(req.userData);
             res.render('pages/findWalker')
         })
 
-        this.app.get('/home/owner/pets', (req, res) => {
+        this.app.get('/home/owner/pets', Auth.verify, (req, res) => {
             res.render('pages/pets');
         })
         
-        this.app.get('/home/walker', (req, res) =>{
+        this.app.get('/home/walker', Auth.verify, (req, res) =>{
             res.render('pages/walker');
         })
 
@@ -98,36 +103,24 @@ class Router{
 
             // Using await to make sure func finished before continuing
             const login = new VerifyLogin(data);
-            const accountID = await login.verify();
+            const credData = await login.verify();
 
             // If no account found return
-            if(!accountID){
+            if(!credData){
                 console.log('Account not found');
-                res.sendStatus(418)
+                res.sendStatus(404)
                 return;
             }
 
+            // Get account
+            const accountData = await Database.manager.getAccount(credData.uuid);
+
             // Send account ID to frontend
             res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify({ID: accountID}));;
+            res.send(JSON.stringify({ID: accountData.uuid, actType: accountData.actType}));;
 
             return;
         });
-    
-        // Validate login data from localStorage
-        // Returns true if date in localstorage is before current date
-        this.app.post('/api/validateLocalAuth', async (req, res) => {
-            const data = req.body;
-
-            // Compare date to local date
-            const dateNow = new Date();
-            dateNow.setTime(dateNow.getTime());
-
-            const authDate = new Date(data.expires);
-
-            res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify(dateNow.getTime() < authDate.getTime()));
-        })
 
         // Return account type
         this.app.post('/api/ownerwalker', async (req, res) => {
@@ -242,6 +235,32 @@ class Router{
             await Database.manager.removeJob(data.userID, data.walkerID);
 
             res.sendStatus(200);
+        })
+
+        this.app.post('/api/createTokens', async (req, res) => {
+            const data = req.body;
+            const access = await JWT.createToken(
+                process.env.ACCESS_SECRET, data, '1h'
+            );
+            const refresh = await JWT.createToken(
+                process.env.REFRESH_SECRET, data, '1d'
+            );
+
+            // Store refresh in database
+            const cred = await Database.manager.getCred(data.userData.ID);
+            cred.refresh = refresh;
+            await cred.save();
+
+            // Add refresh too cookies
+            res.set('Content-Type', 'application/JSON')
+            res.cookie('jwt', refresh, {
+                    httpOnly: true,
+                    sameSite: 'None',
+                    secure: true,
+                    maxAge: 24 * 60 * 60 * 1000
+                }
+            );
+            res.send(JSON.stringify(access))
         })
     }
 

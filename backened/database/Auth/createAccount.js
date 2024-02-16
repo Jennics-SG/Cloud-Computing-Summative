@@ -48,7 +48,8 @@ class Account{
         const login = {
             uuid: this.data.uuid,
             email: this.data.email,
-            pass: this.data.pass
+            pass: this.data.pass,
+            refresh: " "
         }
 
         // Save to cred and account db

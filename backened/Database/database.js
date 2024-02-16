@@ -48,6 +48,10 @@ class Manager{
         return new CredsModel(data)
     }
 
+    static async getCred(userID){
+        return await CredsModel.findOne({uuid: userID});
+    }
+
     static getPetModel(data){
         return new PetModel(data)
     }
@@ -73,7 +77,6 @@ class Manager{
     }
 
     static async removeJob(userID, walkerID){
-        console.log(userID, walkerID);
         return await JobModel.deleteOne({user: userID, walker: walkerID});
     }
 
