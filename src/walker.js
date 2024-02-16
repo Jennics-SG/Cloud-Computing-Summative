@@ -26,10 +26,17 @@ class Walker{
         this.offersDiv.appendChild(offerCont);
 
         // Div holding accepted jobs
+        const jobCont = document.createElement('div');
+        jobCont.id = "jobCont";
+        this.jobsDiv.appendChild(jobCont);
 
-        for(const job of jobs.offers){
+        for(const offer of jobs.offers){
+            let details = await this.getJobDetails(offer.user);
+            this.makeUIElem(offerCont, {...offer, ...details});
+        }
+        for(const job of jobs.accepted){
             let details = await this.getJobDetails(job.user);
-            this.makeUIElem(offerCont, {...job, ...details});
+            this.makeUIElem(jobCont, {...job, ...details});
         }
     }
 
@@ -72,7 +79,7 @@ class Walker{
                 'click', _=> this.acceptJob(content.user, content.walker)
             );
             accDecCont.appendChild(acceptBtn);
-            
+
             const declineBtn = document.createElement('button');
             declineBtn.innerHTML = "Decline";
             declineBtn.addEventListener(
@@ -81,6 +88,24 @@ class Walker{
             accDecCont.appendChild(declineBtn);
 
             cont.appendChild(accDecCont);
+        } else {
+            const completeRemoveCont = document.createElement('div');
+
+            const completeBtn = document.createElement('button');
+            completeBtn.innerHTML = "Complete";
+            completeBtn.addEventListener(
+                'click', _=> this.removeJob(content.user, content.walker)
+            );
+            completeRemoveCont.appendChild(completeBtn);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = "Remove";
+            removeBtn.addEventListener(
+                'click', _=> this.removeJob(content.user, content.walker)
+            );
+            completeRemoveCont.appendChild(removeBtn);
+
+            cont.appendChild(completeRemoveCont);
         }
 
         parent.appendChild(cont);

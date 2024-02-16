@@ -231,14 +231,15 @@ class Router{
             job.accepted = true;
 
             // Save job
-            //await job.save();
+            await job.save();
             res.sendStatus(200);
         });
 
+        // Remove job from db
         this.app.post('/api/removeJob', async (req, res) => {
             const data = req.body;
 
-            console.log(await Database.manager.removeJob(data.userID, data.walkerID));
+            await Database.manager.removeJob(data.userID, data.walkerID);
 
             res.sendStatus(200);
         })
