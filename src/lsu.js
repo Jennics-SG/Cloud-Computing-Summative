@@ -68,7 +68,7 @@ class onReady{
             return;
         }
 
-        const response = await fetch('../api/newuser', {
+        const response = await fetch('../auth/newuser', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -81,7 +81,6 @@ class onReady{
             return;
         }
 
-        const userID = await response.json();
         window.location.href = "./login";
     }
 
@@ -100,7 +99,7 @@ class onReady{
             }
         }
 
-        const response = await fetch('../api/userlogin', {
+        const response = await fetch('../auth/userlogin', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -113,9 +112,9 @@ class onReady{
             return;
         }
 
-        const userData = await response.json();
-        
-        this.getTokens(userData);
+        const access = await response.json();
+
+        localStorage.setItem('access', JSON.stringify(access))
         window.location.href = "../../home/owner";
     }
 
@@ -125,23 +124,6 @@ class onReady{
 
         textElem.innerHTML = "";
         textElem.textContent = message;
-    }
-
-    // Put user auth in local storage
-    async getTokens(userData){
-        // Clear local just to be safe
-        localStorage.clear();
-        
-        // Get Tokens
-        const response = await fetch('../api/createTokens', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/JSON',
-            },
-            body: JSON.stringify({userData})
-        });
-
-        localStorage.setItem('jwt', JSON.stringify(await response.json()));
     }
 }
 

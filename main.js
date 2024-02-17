@@ -40,10 +40,6 @@ class Server{
 
     // Server runtime
     runtime(){
-        // Call routes for server
-        this.router.routes.get.bind(this.router)();
-        this.router.routes.post.bind(this.router)();
-
         // Establish Database Connection
         Database.manager.connect();
 
