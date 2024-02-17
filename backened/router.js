@@ -82,8 +82,8 @@ class Router{
         })
 
         // Add a pet to the database
-        this.app.post('/api/addPet', async (req, res) => {
-            const data = req.body;
+        this.app.post('/api/addPet', this.verifyAuth, async (req, res) => {
+            const data = {...req.body, owner: req.userID};
 
             const pet = new AddPet(data);
             const petID = await pet.save();
@@ -98,11 +98,9 @@ class Router{
         })
 
         // Return pets registered to User
-        this.app.post('/api/getPets', async (req, res) => {
-            const data = req.body;
-
+        this.app.post('/api/getPets', this.verifyAuth, async (req, res) => {
             res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify(await Database.manager.getPets(data.userid)))
+            res.send(JSON.stringify(await Database.manager.getPets(req.userID)))
         });
 
         // Get list of walkers
@@ -112,8 +110,8 @@ class Router{
         });
 
         // Ofer job from owner to walker
-        this.app.post('/api/offerJob', async (req, res) => {
-            const data = req.body;
+        this.app.post('/api/offerJob', this.verifyAuth, async (req, res) => {
+            const data = {...req.body, user: req.userID};
 
             const job = new AddJob(data);
             job.save();
@@ -165,10 +163,10 @@ class Router{
 
         this.app.post('/api/acceptJob', this.verifyAuth, async (req, res) => {
             const data = req.body;
-            
+
             // Find job
-            const job = await Database.manager.getJob(req.userID, data.ownerID);
-            
+            const job = await Database.manager.getJob(data.ownerID, req.userID);
+
             // set accepted to true
             job.accepted = true;
 

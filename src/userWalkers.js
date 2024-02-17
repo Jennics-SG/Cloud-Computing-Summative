@@ -3,11 +3,10 @@
  *  Author: Jimy Houlbrook
  *  Date:   14/02/24
  */
+import * as Tokens from '../../static/tokens.js'
+
 class ShowWalkers{
     constructor(){
-        // Get owner ID from localstorage
-        this.user = JSON.parse(localStorage.getItem('userauth'));
-
         this.div = document.getElementById('jobs')
         this.init();
     }
@@ -32,7 +31,7 @@ class ShowWalkers{
 
         const contact = document.createElement('button');
         contact.innerHTML = "Make Offer";
-        contact.addEventListener('click', _=> this.offerJob(this.user.userid, walker.uuid));
+        contact.addEventListener('click', _=> this.offerJob(walker.uuid));
         cont.appendChild(contact);
 
         return {id: walker.uuid, cont: cont}
@@ -51,14 +50,18 @@ class ShowWalkers{
     }
 
     // Offer job to walker
-    async offerJob(userID, walkerID){
+    async offerJob(walkerID){
         const response = await fetch('../../api/offerJob', {
             method: 'POST',
             headers: {
-                "Content-Type": "application/JSON"
+                "Content-Type": "application/JSON",
+                'Authorisation': JSON.stringify(Tokens.getAccess())
             },
-            body: JSON.stringify({user: userID, walker: walkerID})
+            body: JSON.stringify({walker: walkerID})
         });
+
+        // regen access and try again if unauthorised
+        if(response.status != 200) return Tokens.genToken(_=> this.offerJob(walkerID));
     }
 }
 

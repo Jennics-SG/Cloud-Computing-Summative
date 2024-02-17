@@ -4,6 +4,8 @@
  *  Date:   14/02/24
  */
 
+import * as Tokens from '../../static/tokens.js'
+
 class showUserPets{
     constructor(){
         // Get user from localstorage
@@ -29,10 +31,12 @@ class showUserPets{
         const response = await fetch('../../api/getPets', {
             method: 'POST',
             headers: {
-                "Content-Type": "application/JSON"
+                "Content-Type": "application/JSON",
+                'Authorisation': JSON.stringify(Tokens.getAccess())
             },
-            body: JSON.stringify(this.user)
         });
+
+        if(response.status != 200) Tokens.genToken(_=> this.getDogs());
 
         return await response.json();
     }

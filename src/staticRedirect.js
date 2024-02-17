@@ -22,7 +22,7 @@ class StaticRedirect{
         // Regen token and then try request again
         if(typeof(this.act) == "number"){
             await this.genToken();
-            actType = await Tokens.validateToken();
+            this.act = await Tokens.validateToken();
         }
 
         const actType = this.act.actType;

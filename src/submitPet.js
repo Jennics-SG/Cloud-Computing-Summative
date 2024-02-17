@@ -3,6 +3,7 @@
  *  Author: Jimy Houlbrook
  *  Date:   14/02/24
  */
+import * as Tokens from '../../static/tokens.js'
 
 class onReady{
     constructor(){
@@ -32,14 +33,10 @@ class onReady{
 
     // Send pet data to backend
     async addPet(){
-        // Get owner ID from localstorage
-        const user = JSON.parse(localStorage.getItem('userauth'));
-
         // Get pet name & Size
         const data = {
             name: document.getElementById('dogNameIpt').value,
-            size: document.getElementById('sizeIpt').value,
-            owner: user.userid
+            size: document.getElementById('sizeIpt').value
         }
 
         // Check all data has value
@@ -54,7 +51,9 @@ class onReady{
         const response = await fetch('../../api/addPet', {
             method: 'POST',
             headers: {
-                "Content-Type": "application/JSON"
+                "Content-Type": "application/JSON",
+                'Authorisation': JSON.stringify(Tokens.getAccess())
+                
             },
             body: JSON.stringify(data)
         });
@@ -62,7 +61,7 @@ class onReady{
         if(response.status == 503){ 
             this.showUser('Error Saving Pet');
             return;
-        }
+        } else if(response.status != 200) return Tokens.genToken(_=> this.addPet());
         
         this.showUser('Pet saved successfully', false);
     }

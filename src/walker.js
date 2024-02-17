@@ -168,10 +168,13 @@ class Walker{
             },
             body: JSON.stringify({ownerID})
         });
+
+        // regen access and try again if unauthorised
+        if(response.status != 200) return Tokens.genToken(_=> this.getJobsOffers(ownerID));
     }
 
     async removeJob(ownerID){
-        await fetch('../../api/removeJob', {
+        const response = await fetch('../../api/removeJob', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/JSON',
@@ -179,6 +182,9 @@ class Walker{
             },
             body: JSON.stringify({owner: ownerID})
         });
+
+        // regen access and try again if unauthorised
+        if(response.status != 200) return Tokens.genToken(_=> this.getJobsOffers(ownerID));
     }
 }
 
