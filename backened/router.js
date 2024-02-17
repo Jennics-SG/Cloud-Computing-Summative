@@ -53,7 +53,6 @@ class Router{
         })
 
         this.app.get('/home/owner/findWalk', (req, res) => {
-            console.log(req.userData);
             res.render('pages/findWalker')
         })
 
@@ -121,9 +120,9 @@ class Router{
         });
 
         // Get jobs linked to user
-        this.app.post('/api/getJobs', async (req, res) => {
+        this.app.post('/api/getJobs', this.verifyAuth, async (req, res) => {
             res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify(await Database.manager.getWalkerJobs(req.body.userID)));
+            res.send(JSON.stringify(await Database.manager.getWalkerJobs(req.userID)));
         });
 
         // Gets details important to job from user
@@ -164,11 +163,11 @@ class Router{
             res.send(JSON.stringify(jobDetails));
         });
 
-        this.app.post('/api/acceptJob', async (req, res) => {
+        this.app.post('/api/acceptJob', this.verifyAuth, async (req, res) => {
             const data = req.body;
             
             // Find job
-            const job = await Database.manager.getJob(data.userID, data.ownerID);
+            const job = await Database.manager.getJob(req.userID, data.ownerID);
             
             // set accepted to true
             job.accepted = true;
@@ -179,13 +178,34 @@ class Router{
         });
 
         // Remove job from db
-        this.app.post('/api/removeJob', async (req, res) => {
+        this.app.post('/api/removeJob', this.verifyAuth, async (req, res) => {            
             const data = req.body;
 
-            await Database.manager.removeJob(data.userID, data.walkerID);
+            await Database.manager.removeJob(data.owner, req.userID);
 
             res.sendStatus(200);
         });
+    }
+
+    // Middleware for verifying auth
+    // Passes userID to function
+    async verifyAuth(req, res, next){
+        const token = JSON.parse(req.header('Authorisation'));
+
+        if(!token){
+            res.sendStatus(401); // Unauthorised
+            return;
+        }
+
+        const data = await JWT.verifyToken(process.env.ACCESS_SECRET, token)
+        .catch(e => {
+            res.sendStatus(401);
+            return;
+        });
+
+        req.userID = data.data.id
+        next();
+        return;
     }
 
     routeAuth(){
@@ -254,11 +274,70 @@ class Router{
             return;
         });
 
-        // Send access to frontend
-        this.app.post('/auth/', async (req, res) => {
-            const data = req.body;
-            console.log(data);
-        })
+        // Validate access token
+        this.app.post('/auth/validateToken', async (req, res) => {
+            const token = req.body.token
+
+            if(!token){
+                res.sendStatus(401); // Unauthorised
+                return;
+            }
+
+            const data = await JWT.verifyToken(process.env.ACCESS_SECRET, token)
+            .catch( e =>{
+                res.sendStatus(401); // Unauthorised
+                return;
+            }); 
+
+            // Send data to frontend
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify(data)); // Authorised
+        });
+
+        // Create access token
+        this.app.post('/auth/createToken', async (req, res) => {
+            const refresh = req.cookies.jwt;
+
+            if(!refresh) res.sendStatus(401);   // Unauthorised
+
+            // Decode refresh to get user ID
+            const data = await JWT.verifyToken(process.env.REFRESH_SECRET, refresh)
+            .catch( e =>{
+                console.log(e);
+                res.sendStatus(401);    // Unauthorised
+                return;
+            });
+
+            // Get user cred
+            const cred = await Database.manager.getCred(data.data.id);
+
+            // Compare stored refresh too cookie refresh
+            const verified = refresh === cred.refresh
+            
+            if(!verified){
+                res.sendStatus(401);     // Still unauthorised lol
+                return;
+            }
+
+            // Generate new access token
+            const access = await JWT.createToken(process.env.ACCESS_SECRET, data.data, '1h');
+            
+            // Send new access to frontend
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify(access));   // Authorised
+        });
+
+        this.app.post('/auth/removeRefresh', async (req, res) => {
+            const { userID } = req.body;
+            
+            // Find cred
+            const cred = await Database.manager.getCred(userID);
+
+            // Remove refresh from cred
+            cred.refresh = " ";
+            cred.save();
+            res.sendStatus(200);
+        });
     }
 
     // Send all files in a directory

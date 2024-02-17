@@ -1,3 +1,5 @@
+import * as Tokens from '../../static/tokens.js'
+
 class Walker{
     constructor(){
         // Divs for tabs
@@ -11,14 +13,13 @@ class Walker{
         jobBtn.addEventListener('click', _=> this.changeTab('jobs'));
         offersBtn.addEventListener('click', _=> this.changeTab('offers'));
 
-        // Get User ID from localStorage
-        this.user = JSON.parse(localStorage.getItem('userauth'));
-
         this.init();
     }
 
     async init(){
-        const jobs = await this.getJobsOffers(this.user.userid);
+        const jobs = await this.getJobsOffers();
+
+        console.log(jobs);
 
         // Div holding offers
         const offerCont = document.createElement('div');
@@ -120,14 +121,18 @@ class Walker{
     }
 
     // Gets jobs & offers associated with account & parses
-    async getJobsOffers(userID){
+    async getJobsOffers(){
+        const token = Tokens.getAccess();
+
         const response = await fetch('../../api/getJobs', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/JSON'
-            },
-            body: JSON.stringify({userID})
+                'Authorisation': JSON.stringify(token)
+            }
         });
+
+        // regen access and try again if unauthorised
+        if(response.status != 200) return Tokens.genToken(_=> this.getJobsOffers());
 
         const allJobs = await response.json();
         const offers = new Array();
@@ -145,7 +150,8 @@ class Walker{
         const response = await fetch('../../api/getJobDetails', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/JSON'
+                'Content-Type': 'application/JSON',
+                'Authorisation': JSON.stringify(Tokens.getAccess())
             },
             body: JSON.stringify({ownerID})
         });
@@ -153,23 +159,25 @@ class Walker{
         return await response.json();
     }
 
-    async acceptJob(userID, ownerID){
+    async acceptJob(ownerID){
         await fetch('../../api/acceptJob', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/JSON'
+                'Content-Type': 'application/JSON',
+                'Authorisation': JSON.stringify(Tokens.getAccess())
             },
-            body: JSON.stringify({userID, ownerID})
+            body: JSON.stringify({ownerID})
         });
     }
 
-    async removeJob(userID, walkerID){
+    async removeJob(ownerID){
         await fetch('../../api/removeJob', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/JSON'
+                'Content-Type': 'application/JSON',
+                'Authorisation': JSON.stringify(Tokens.getAccess())
             },
-            body: JSON.stringify({userID, walkerID})
+            body: JSON.stringify({owner: ownerID})
         });
     }
 }

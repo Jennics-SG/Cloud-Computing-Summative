@@ -17,10 +17,9 @@ class JWT{
                 if(err) rej(err);
 
                 // Ensure token is not expired
-                if(Date.now() >= decoded.exp * 1000) rej();
+                if(Date.now() >= decoded.exp * 1000) rej('Expired');
 
                 res(decoded);
-
             });
         })
     }
