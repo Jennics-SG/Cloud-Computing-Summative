@@ -16,6 +16,10 @@ const loginUserSchema = new Schema({
         type: String,
         min: 6,
         required: [true, "Gotta authenticate"]
+    },
+    refresh: {
+        type: String,
+        required: true
     }
 })
 

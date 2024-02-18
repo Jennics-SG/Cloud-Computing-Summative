@@ -13,24 +13,23 @@ const CreateAccount = require('./database/Auth/createAccount');
 const VerifyLogin = require('./database/Auth/verifyLogin')
 const AddPet = require('./database/addPet');
 const AddJob = require('./database/addJob');
+const JWT = require('./jwt')
+
+require('dotenv');
 
 // Router for the express application
 class Router{
     constructor(app){
         this.app = app;
-
-        // Object to hold the routing functions
-        this.routes = {
-            get: this.routeGet,
-            post: this.routePost
-        }
+        
+        this.routeGet();
+        this.routeApi();
+        this.routeAuth();
     }
 
     // All get routes
     routeGet(){
-        // Home routes, redirect to /home/:display
         this.app.get('/', (req, res) => {
-            // TODO Use cookie to tell if user has account
             res.redirect('/lsu/signup');
         });
 
@@ -68,68 +67,10 @@ class Router{
         this.sendDir(path.join(__dirname, '../src'));
     }
 
-    // All post routes
-    routePost(){
-        // Sign user up to database
-        this.app.post('/api/newuser', async (req, res) => {
-            const data = req.body
-
-            // Using await to make sure func finished before continuing
-            const newUser = new CreateAccount(data);
-            const accountID = await newUser.save();
-
-            // Return if user not saved
-            if(! accountID){
-                // Uses 418 bcs teapot
-                console.log('Error saving user');
-                res.sendStatus(418);
-                return;
-            }
-
-            // Send user ID to frontend
-            res.set('Content-Type', 'application/json');
-            res.send(JSON.stringify({ID: accountID}))
-            return;
-        });
-
-        // Log user in to service
-        this.app.post('/api/userlogin', async (req, res) => {
-            const data = req.body;
-
-            // Using await to make sure func finished before continuing
-            const login = new VerifyLogin(data);
-            const accountID = await login.verify();
-
-            // If no account found return
-            if(!accountID){
-                console.log('Account not found');
-                res.sendStatus(418)
-                return;
-            }
-
-            // Send account ID to frontend
-            res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify({ID: accountID}));;
-
-            return;
-        });
-    
-        // Validate login data from localStorage
-        // Returns true if date in localstorage is before current date
-        this.app.post('/api/validateLocalAuth', async (req, res) => {
-            const data = req.body;
-
-            // Compare date to local date
-            const dateNow = new Date();
-            dateNow.setTime(dateNow.getTime());
-
-            const authDate = new Date(data.expires);
-
-            res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify(dateNow.getTime() < authDate.getTime()));
-        })
-
+    // API post routes
+    routeApi(){
         // Return account type
+        // Possibly redundant??
         this.app.post('/api/ownerwalker', async (req, res) => {
             const data = req.body;
 
@@ -140,8 +81,8 @@ class Router{
         })
 
         // Add a pet to the database
-        this.app.post('/api/addPet', async (req, res) => {
-            const data = req.body;
+        this.app.post('/api/addPet', this.verifyAuth, async (req, res) => {
+            const data = {...req.body, owner: req.userID};
 
             const pet = new AddPet(data);
             const petID = await pet.save();
@@ -156,11 +97,9 @@ class Router{
         })
 
         // Return pets registered to User
-        this.app.post('/api/getPets', async (req, res) => {
-            const data = req.body;
-
+        this.app.post('/api/getPets', this.verifyAuth, async (req, res) => {
             res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify(await Database.manager.getPets(data.userid)))
+            res.send(JSON.stringify(await Database.manager.getPets(req.userID)))
         });
 
         // Get list of walkers
@@ -170,17 +109,17 @@ class Router{
         });
 
         // Ofer job from owner to walker
-        this.app.post('/api/offerJob', async (req, res) => {
-            const data = req.body;
+        this.app.post('/api/offerJob', this.verifyAuth, async (req, res) => {
+            const data = {...req.body, user: req.userID};
 
             const job = new AddJob(data);
             job.save();
         });
 
         // Get jobs linked to user
-        this.app.post('/api/getJobs', async (req, res) => {
+        this.app.post('/api/getJobs', this.verifyAuth, async (req, res) => {
             res.set('Content-Type', 'application/JSON');
-            res.send(JSON.stringify(await Database.manager.getWalkerJobs(req.body.userID)));
+            res.send(JSON.stringify(await Database.manager.getWalkerJobs(req.userID)));
         });
 
         // Gets details important to job from user
@@ -221,12 +160,13 @@ class Router{
             res.send(JSON.stringify(jobDetails));
         });
 
-        this.app.post('/api/acceptJob', async (req, res) => {
+        // Accept an offered job
+        this.app.post('/api/acceptJob', this.verifyAuth, async (req, res) => {
             const data = req.body;
-            
+
             // Find job
-            const job = await Database.manager.getJob(data.userID, data.ownerID);
-            
+            const job = await Database.manager.getJob(data.ownerID, req.userID);
+
             // set accepted to true
             job.accepted = true;
 
@@ -236,13 +176,164 @@ class Router{
         });
 
         // Remove job from db
-        this.app.post('/api/removeJob', async (req, res) => {
+        this.app.post('/api/removeJob', this.verifyAuth, async (req, res) => {            
             const data = req.body;
 
-            await Database.manager.removeJob(data.userID, data.walkerID);
+            await Database.manager.removeJob(data.owner, req.userID);
 
             res.sendStatus(200);
-        })
+        });
+    }
+
+    // Auth routes
+    routeAuth(){
+        // Sign user up to database
+        this.app.post('/auth/newuser', async (req, res) => {
+            const data = req.body
+
+            const newUser = new CreateAccount(data);
+            const accountID = await newUser.save();
+
+            // Return if user not saved
+            if(!accountID){
+                console.log('Error saving user');
+                res.sendStatus(409);    // Conflict
+                return;
+            }
+
+            // Send user ID to frontend
+            res.set('Content-Type', 'application/json');
+            res.send(JSON.stringify({ID: accountID}))
+            return;
+        });
+
+        // Log user in to service
+        this.app.post('/auth/userlogin', async (req, res) => {
+            const data = req.body;
+
+            const login = new VerifyLogin(data);
+            const credData = await login.verify();
+
+            // If no account found return
+            if(!credData){
+                console.log('Account not found');
+                res.sendStatus(404);    // Not found
+                return;
+            }
+
+            // Get account
+            const accountData = await Database.manager.getAccount(credData.uuid);
+
+            // Create refresh & access and send them to frontend
+            const tokenData = {
+                id: accountData.uuid,
+                actType: accountData.actType 
+            }
+
+            const access = await JWT.createToken(process.env.ACCESS_SECRET, tokenData, '1h');
+            const refresh = await JWT.createToken(process.env.REFRESH_SECRET, tokenData, '1d');
+
+            // Store refresh in userCred
+            credData.refresh = refresh;
+            await credData.save();
+
+            // Add refresh to cookies
+            res.set('Content-Type', 'application/JSON');
+            res.cookie('jwt', refresh, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
+                maxAge: 24 * 60 * 60 * 1000
+            });
+            res.send(JSON.stringify(access));
+
+            return;
+        });
+
+        // Validate access token
+        this.app.post('/auth/validateToken', async (req, res) => {
+            const token = req.body.token
+
+            if(!token){
+                res.sendStatus(401); // Unauthorised
+                return;
+            }
+
+            const data = await JWT.verifyToken(process.env.ACCESS_SECRET, token)
+            .catch( e =>{
+                res.sendStatus(401); // Unauthorised
+                return;
+            }); 
+
+            // Send data to frontend
+            res.send(JSON.stringify(data)); // Authorised
+        });
+
+        // Create access token
+        this.app.post('/auth/createToken', async (req, res) => {
+            const refresh = req.cookies.jwt;
+
+            if(!refresh) res.sendStatus(401);   // Unauthorised
+
+            // Decode refresh to get user ID
+            const data = await JWT.verifyToken(process.env.REFRESH_SECRET, refresh)
+            .catch( e =>{
+                res.sendStatus(401);    // Unauthorised
+                return;
+            });
+
+            // Get user cred
+            const cred = await Database.manager.getCred(data.data.id);
+
+            // Compare stored refresh too cookie refresh
+            const verified = refresh === cred.refresh
+            
+            if(!verified){
+                res.sendStatus(401);     // Still unauthorised lol
+                return;
+            }
+
+            // Generate new access token
+            const access = await JWT.createToken(process.env.ACCESS_SECRET, data.data, '1h');
+            
+            // Send new access to frontend
+            res.set('Content-Type', 'application/JSON');
+            res.send(JSON.stringify(access));   // Authorised
+        });
+
+        // Remove refresh token from cred
+        this.app.post('/auth/removeRefresh', async (req, res) => {
+            const { userID } = req.body;
+            
+            // Find cred
+            const cred = await Database.manager.getCred(userID);
+
+            // Remove refresh from cred
+            cred.refresh = " ";
+            cred.save();
+            res.sendStatus(200);
+        });
+    }
+
+    // Middleware for verifying auth
+    // Passes userID to function
+    async verifyAuth(req, res, next){
+        const token = JSON.parse(req.header('Authorisation'));
+
+        if(!token){
+            res.sendStatus(401); // Unauthorised
+            return;
+        }
+
+        const data = await JWT.verifyToken(process.env.ACCESS_SECRET, token)
+        .catch(e => {
+            res.sendStatus(401); // Unauthorised
+            return;
+        });
+
+        req.userID = data.data.id;
+        next(); // Authorised
+        return;
     }
 
     // Send all files in a directory

@@ -1,55 +1,77 @@
 /** Name:   WaglyJs.frontend.staticRedirect.js
- *  Desc:   Redirect users to relevant sites
+ *  Desc:   Script to validate access token, redirect if needed 
+ *          & handle user logging out
  *  Author: Jimy Houlbrook
- *  Date:   14/02/24
+ *  Date:   17/02/24
  */
-class Redirect{
+
+import * as Tokens from '../../static/tokens.js'
+
+// Class to hold code
+class StaticRedirect{
+    // Get URL
     constructor(){
-        // Get user from localstorage
-        this.user = JSON.parse(localStorage.getItem('userauth'));
-
         this.url = window.location.href;
-
-        this.init()
+        this.init();
     }
 
+    /** Initialise & run static redirects
+     * 
+     *  @description validates access token to get account type and then checks 
+     *  if the account is allowed on connected page, if not redirect
+     *  to correct page
+     * 
+     * @returns if user is on login page
+     */
     async init(){
-        // Using so many ../ bcs idk how deep its gonna be
-        // Cant go further than root directory lol
+        if(this.url.includes('lsu')) return;
 
-        // Ensure user is logged in
-        if(!this.user && !this.url.includes('lsu')){
-            window.location.href = "../../../../lsu"
-            return;
+        // Check if access token is valid & get account Type
+        this.act = await Tokens.validateToken();
+
+        // Act should only be a number if unauthorised
+        // Regen token and then try request again
+        if(typeof(this.act) == "number"){
+            await Tokens.genToken(
+                async _=> this.act = await Tokens.validateToken()
+            );
         }
 
-        // Redirect user based on account type & url
-        const accountType = await this.getAccountType();
-        switch(accountType){
+        const actType = this.act.actType;
+
+        // Redirect user if they're connected to wrong page
+        switch(actType){
             case "owner":
                 if(this.url.includes('walker'))
-                    window.location.href = "../../../../home/owner"
+                    window.location.href = "../../../home/owner";
                 break;
             case "walker":
                 if(this.url.includes('owner'))
-                    window.location.href = "../../../../home/walker"
+                    window.location.href = "../../../home/walker"
                 break;
         }
+
+        // Listener for logout button
+        const logoutBtn = document.getElementById('logout');
+        logoutBtn.addEventListener('click', this.logout.bind(this))
     }
 
-    // Get account type from database
-    async getAccountType(){
-        if(!this.user) return;
-        const response = await fetch('../../api/ownerwalker', {
+    /** Log user out of page */
+    async logout(){
+        localStorage.clear();
+
+        const userID = this.act.id;
+
+        await fetch('../../auth/removeRefresh', {
             method: 'POST',
             headers: {
-                "Content-Type": "application/JSON"
+                'Content-Type': 'application/JSON'
             },
-            body: JSON.stringify(this.user)
+            body: JSON.stringify({userID})
         });
 
-        return await response.json();
+        window.location.href = "../../lsu";
     }
 }
 
-document.addEventListener('DOMContentLoaded', new Redirect)
+new StaticRedirect

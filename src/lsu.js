@@ -5,7 +5,8 @@
  */
 
 // Class to hold the code
-class onReady{
+class loginSignUp{
+    /** Initialises document elements and listeners */
     constructor(){
         // Get divs for each tab
         this.login = document.getElementById('login');
@@ -36,7 +37,10 @@ class onReady{
         loginBtn.addEventListener('click', this.validateLogin.bind(this));
     }
 
-    // Change to correct tab
+    /** Change Tab shown to user
+     * 
+     * @param {String} tab  name of tab to be shown 
+     */
     changeTab(tab){
         this.login.style.display = tab == 'login' ?
             'flex' : 'none';
@@ -44,7 +48,7 @@ class onReady{
             'flex' : 'none';
     }
 
-    // Validate & send signup to server
+    /** Validate & send signup to server */
     async validateSignup(){
         const data = {
             name: document.getElementById('nameIpt').value,
@@ -68,7 +72,7 @@ class onReady{
             return;
         }
 
-        const response = await fetch('../api/newuser', {
+        const response = await fetch('../auth/newuser', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -81,12 +85,10 @@ class onReady{
             return;
         }
 
-        const userID = await response.json();
-        this.putUserinLocal(userID);
-        window.location.href = "../../home/owner";
+        window.location.href = "./login";
     }
 
-    // Validate login & send to server
+    /** Validate login & send to server */
     async validateLogin(){
         const data = {
             email: document.getElementById('LIemailIpt').value,
@@ -101,7 +103,7 @@ class onReady{
             }
         }
 
-        const response = await fetch('../api/userlogin', {
+        const response = await fetch('../auth/userlogin', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -114,35 +116,25 @@ class onReady{
             return;
         }
 
-        const userID = await response.json();
-        this.putUserinLocal(userID);
+        const access = await response.json();
+
+        // Store access token in local
+        localStorage.setItem('access', JSON.stringify(access));
+
+        // Redirect to home
         window.location.href = "../../home/owner";
     }
 
-    // Show user a message
+    /** Show the user a message
+     * 
+     * @param {String} message  Message to be shown 
+     */
     showUser(message){
         const textElem = document.getElementById('showUser');
 
         textElem.innerHTML = "";
         textElem.textContent = message;
     }
-
-    // Put user auth in local storage
-    putUserinLocal(userID){
-        // Clear local just to be safe
-        localStorage.clear();
-
-        // Create expiry date
-        const date = new Date();
-        date.setTime(date.getTime() + (1*24*60*60*1000));
-        
-        const data = {
-            userid: userID.ID,
-            expires: date.toUTCString()
-        };
-
-        localStorage.setItem('userauth', JSON.stringify(data));
-    }
 }
 
-document.addEventListener('DOMContentLoaded', new onReady)
+document.addEventListener('DOMContentLoaded', new loginSignUp)

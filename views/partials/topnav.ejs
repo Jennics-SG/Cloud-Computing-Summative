@@ -10,19 +10,13 @@
         <a class = "icon"><img src="/static/favicon.ico"></a>
         <a class = "link" href="../owner/pets">PETS</a>
         <a class = "link" href="../owner/findWalk">WALKERS</a>
-        <a class = "login" onclick="logout()">LOGOUT</a>
+        <a class = "login" id="logout">LOGOUT</a>
     </nav>
 <%} else if (locals.user == "Walker"){%>
     <nav id = "header">
         <a class = "icon"><img src="/static/favicon.ico"></a>
         <a class = "link" id = "jobsBtn">JOBS</a>
         <a class = "link" id = "offersBtn">OFFERS</a>
-        <a class = "login" onclick="logout()">LOGOUT</a>
+        <a class = "login" id="logout">LOGOUT</a>
     </nav>
 <%}%>
-<script>
-    function logout(){
-        localStorage.clear();
-        window.location.href = "../../lsu/login"
-    }
-</script>

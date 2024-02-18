@@ -36,7 +36,7 @@ class Login{
         if(! await Encrypt.validPass(this.data.pass, account.pass))
             return undefined;
 
-        return account.uuid;
+        return account;
     }
 
     // Returns the user found from the database

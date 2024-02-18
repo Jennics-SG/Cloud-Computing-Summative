@@ -1,4 +1,14 @@
+/** Name:   WaglyJs.frontend.walker.js
+ *  Desc:   Code for the walkers page
+ *  Author: Jimy Houlbrook
+ *  Date:   18/02/24
+ */
+
+import * as Tokens from '../../static/tokens.js'
+
+// Class holding walker code
 class Walker{
+    /** Get HTMl elems and set listeners */
     constructor(){
         // Divs for tabs
         this.jobsDiv = document.getElementById("jobs");
@@ -11,14 +21,14 @@ class Walker{
         jobBtn.addEventListener('click', _=> this.changeTab('jobs'));
         offersBtn.addEventListener('click', _=> this.changeTab('offers'));
 
-        // Get User ID from localStorage
-        this.user = JSON.parse(localStorage.getItem('userauth'));
-
         this.init();
     }
 
+    /** Get jobs and create UI for them */
     async init(){
-        const jobs = await this.getJobsOffers(this.user.userid);
+        const jobs = await this.getJobsOffers();
+
+        console.log(jobs);
 
         // Div holding offers
         const offerCont = document.createElement('div');
@@ -30,17 +40,23 @@ class Walker{
         jobCont.id = "jobCont";
         this.jobsDiv.appendChild(jobCont);
 
+        // Show job offers
         for(const offer of jobs.offers){
             let details = await this.getJobDetails(offer.user);
             this.makeUIElem(offerCont, {...offer, ...details});
         }
+
+        // Show accepted jobs
         for(const job of jobs.accepted){
             let details = await this.getJobDetails(job.user);
             this.makeUIElem(jobCont, {...job, ...details});
         }
     }
 
-    // Change to correct tab
+    /** Change Tab shown to user
+     * 
+     * @param {String} tab  name of tab to be shown 
+     */
     changeTab(tab){
         this.jobsDiv.style.display = tab == 'jobs' ?
             'flex' : 'none';
@@ -48,10 +64,12 @@ class Walker{
             'flex' : 'none';
     }
 
-    // Make ui element containing content for parent
+    /** Make UI element
+     * 
+     * @param {HTMLElement} parent  Parent to add container too 
+     * @param {object}      content Content to display 
+     */
     makeUIElem(parent, content){
-        console.table(content);
-
         const cont = document.createElement('label');
         cont.id = 'cont';
 
@@ -88,7 +106,9 @@ class Walker{
             accDecCont.appendChild(declineBtn);
 
             cont.appendChild(accDecCont);
-        } else {
+        } 
+        // Complete / Remove buttons for accepted jobs
+        else {
             const completeRemoveCont = document.createElement('div');
 
             const completeBtn = document.createElement('button');
@@ -111,6 +131,11 @@ class Walker{
         parent.appendChild(cont);
     }
 
+    /** Translate pet size from letter code to word
+     * 
+     * @param {string} size Letter Code
+     * @returns Size in word form
+     */
     translateSize(size){
         if(size == "s") size = "Small";
         if(size == "m") size = "Medium";
@@ -119,15 +144,19 @@ class Walker{
         return size
     }
 
-    // Gets jobs & offers associated with account & parses
-    async getJobsOffers(userID){
+    /** Gets jobs & offers associated with account & parses */
+    async getJobsOffers(){
+        const token = Tokens.getAccess();
+
         const response = await fetch('../../api/getJobs', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/JSON'
-            },
-            body: JSON.stringify({userID})
+                'Authorisation': JSON.stringify(token)
+            }
         });
+
+        // regen access and try again if unauthorised
+        if(response.status != 200) return Tokens.genToken(_=> this.getJobsOffers());
 
         const allJobs = await response.json();
         const offers = new Array();
@@ -141,11 +170,17 @@ class Walker{
         return { offers, accepted }
     }
 
+    /** Get job details with API call
+     * 
+     * @param {String} ownerID  ID of job owner 
+     * @returns details
+     */
     async getJobDetails(ownerID){
         const response = await fetch('../../api/getJobDetails', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/JSON'
+                'Content-Type': 'application/JSON',
+                'Authorisation': JSON.stringify(Tokens.getAccess())
             },
             body: JSON.stringify({ownerID})
         });
@@ -153,24 +188,42 @@ class Walker{
         return await response.json();
     }
 
-    async acceptJob(userID, ownerID){
+    /** Accept Job with API call
+     * 
+     * @param {String} ownerID  ID of job owner 
+     * @returns callback
+     */
+    async acceptJob(ownerID){
         await fetch('../../api/acceptJob', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/JSON'
+                'Content-Type': 'application/JSON',
+                'Authorisation': JSON.stringify(Tokens.getAccess())
             },
-            body: JSON.stringify({userID, ownerID})
+            body: JSON.stringify({ownerID})
         });
+
+        // regen access and try again if unauthorised
+        if(response.status != 200) return Tokens.genToken(_=> this.getJobsOffers(ownerID));
     }
 
-    async removeJob(userID, walkerID){
-        await fetch('../../api/removeJob', {
+    /** Remove job wiht API call
+     * 
+     * @param {String} ownerID 
+     * @returns callback
+     */
+    async removeJob(ownerID){
+        const response = await fetch('../../api/removeJob', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/JSON'
+                'Content-Type': 'application/JSON',
+                'Authorisation': JSON.stringify(Tokens.getAccess())
             },
-            body: JSON.stringify({userID, walkerID})
+            body: JSON.stringify({owner: ownerID})
         });
+
+        // regen access and try again if unauthorised
+        if(response.status != 200) return Tokens.genToken(_=> this.getJobsOffers(ownerID));
     }
 }
 
