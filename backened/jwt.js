@@ -1,6 +1,21 @@
+/** Name:   WaglyJs.backend.jwt.js
+ *  Desc:   Backend code for dealing with JWT tokens   
+ *  Author: Jimy Houlbrook
+ *  Date:   17/02/24
+ */
+
 const jwt = require('jsonwebtoken');
 
+// CLass to hold the code init
 class JWT{
+    /** Create a token
+     * 
+     * @param {String}  secret       Secret Key 
+     * @param {object}  data         Data to store in token 
+     * @param {String}  expiresIn    Length to expiry
+     * 
+     * @returns signed token
+     */
     static async createToken(secret, data, expiresIn){
         return new Promise((res, rej) => {
             jwt.sign({data}, secret, {expiresIn}, (err, token) => {
@@ -10,6 +25,12 @@ class JWT{
         });
     }
     
+    /** Verify a token
+     * 
+     * @param {String} secret   Secret Key 
+     * @param {String} token    Token to verify 
+     * @returns Data stored in token
+     */
     static async verifyToken(secret, token){
         return new Promise((res, rej) => {
             // verify a token symmetric
@@ -26,18 +47,3 @@ class JWT{
 }
 
 module.exports = JWT
-
-// // middleware/authMiddleware.js
-
-// const jwt = require('jsonwebtoken');
-// function verifyToken(req, res, next) {
-//     const token = req.header('Authorization');
-//     if (!token) return res.status(401).json({ error: 'Access denied' });
-//     try {
-//         const decoded = jwt.verify(token, 'your-secret-key');
-//         req.userId = decoded.userId;
-//         next();
-//     } catch (error) {
-//         res.status(401).json({ error: 'Invalid token' });
-//     }
-// };

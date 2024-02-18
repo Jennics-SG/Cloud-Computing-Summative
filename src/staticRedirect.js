@@ -1,17 +1,28 @@
-// Script to validate access token an redirect to correct page if needed
-// if access token not validated create new access with refresh
-// when new access token try original request again
-// when refresh not validated redirect to login
-// Also deals with logging out
+/** Name:   WaglyJs.frontend.staticRedirect.js
+ *  Desc:   Script to validate access token, redirect if needed 
+ *          & handle user logging out
+ *  Author: Jimy Houlbrook
+ *  Date:   17/02/24
+ */
 
 import * as Tokens from '../../static/tokens.js'
 
+// Class to hold code
 class StaticRedirect{
+    // Get URL
     constructor(){
         this.url = window.location.href;
         this.init();
     }
 
+    /** Initialise & run static redirects
+     * 
+     *  @description validates access token to get account type and then checks 
+     *  if the account is allowed on connected page, if not redirect
+     *  to correct page
+     * 
+     * @returns if user is on login page
+     */
     async init(){
         if(this.url.includes('lsu')) return;
 
@@ -21,8 +32,9 @@ class StaticRedirect{
         // Act should only be a number if unauthorised
         // Regen token and then try request again
         if(typeof(this.act) == "number"){
-            await this.genToken();
-            this.act = await Tokens.validateToken();
+            await Tokens.genToken(
+                async _=> this.act = await Tokens.validateToken()
+            );
         }
 
         const actType = this.act.actType;
@@ -44,42 +56,7 @@ class StaticRedirect{
         logoutBtn.addEventListener('click', this.logout.bind(this))
     }
 
-    async validateToken(){
-        const token = JSON.parse(localStorage.getItem('access'));
-
-        const response = await fetch('../../auth/validateToken',{
-            'method': 'POST',
-            headers: {
-                'Content-Type': 'application/JSON'
-            },
-            body: JSON.stringify({token})
-        });
-
-        if(response.status != 200) return response.status;
-
-        const data = await response.json();
-
-        return data.data;
-    }
-
-    async genToken(){
-        const response = await fetch('../../auth/createToken', {
-            'method': 'POST',
-            headers: {
-                'Content-Type': 'application/JSON'
-            }
-        });
-
-        if(response.status !== 200){
-            window.location.href = '../../lsu/'
-            return;
-        }
-
-        // Put new access in local
-        localStorage.setItem('access', JSON.stringify(await response.json()));
-        return;
-    }
-
+    /** Log user out of page */
     async logout(){
         localStorage.clear();
 

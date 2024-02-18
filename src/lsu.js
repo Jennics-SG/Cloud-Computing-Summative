@@ -5,7 +5,8 @@
  */
 
 // Class to hold the code
-class onReady{
+class loginSignUp{
+    /** Initialises document elements and listeners */
     constructor(){
         // Get divs for each tab
         this.login = document.getElementById('login');
@@ -36,7 +37,10 @@ class onReady{
         loginBtn.addEventListener('click', this.validateLogin.bind(this));
     }
 
-    // Change to correct tab
+    /** Change Tab shown to user
+     * 
+     * @param {String} tab  name of tab to be shown 
+     */
     changeTab(tab){
         this.login.style.display = tab == 'login' ?
             'flex' : 'none';
@@ -44,7 +48,7 @@ class onReady{
             'flex' : 'none';
     }
 
-    // Validate & send signup to server
+    /** Validate & send signup to server */
     async validateSignup(){
         const data = {
             name: document.getElementById('nameIpt').value,
@@ -84,7 +88,7 @@ class onReady{
         window.location.href = "./login";
     }
 
-    // Validate login & send to server
+    /** Validate login & send to server */
     async validateLogin(){
         const data = {
             email: document.getElementById('LIemailIpt').value,
@@ -114,11 +118,17 @@ class onReady{
 
         const access = await response.json();
 
-        localStorage.setItem('access', JSON.stringify(access))
+        // Store access token in local
+        localStorage.setItem('access', JSON.stringify(access));
+
+        // Redirect to home
         window.location.href = "../../home/owner";
     }
 
-    // Show user a message
+    /** Show the user a message
+     * 
+     * @param {String} message  Message to be shown 
+     */
     showUser(message){
         const textElem = document.getElementById('showUser');
 
@@ -127,4 +137,4 @@ class onReady{
     }
 }
 
-document.addEventListener('DOMContentLoaded', new onReady)
+document.addEventListener('DOMContentLoaded', new loginSignUp)

@@ -5,13 +5,15 @@
  */
 import * as Tokens from '../../static/tokens.js'
 
+// Class to hold the code
 class ShowWalkers{
+    /** get HTML elements */
     constructor(){
         this.div = document.getElementById('jobs')
         this.init();
     }
 
-    // Get walkers and create UI elem for each
+    /** Get walkers and create UI elem for each */
     async init(){
         const walkers = await this.getWalkers();
         for(const walker of walkers){
@@ -20,7 +22,11 @@ class ShowWalkers{
         }
     }
 
-    // Make UI element to hold walker
+    /** Make a UI element for the walker
+     * 
+     * @param {Array} walker 
+     * @returns Walker ID & HTML Label element
+     */
     makeUIElem(walker){
         const cont = document.createElement('label');
         cont.id = "cont";
@@ -37,7 +43,10 @@ class ShowWalkers{
         return {id: walker.uuid, cont: cont}
     }
 
-    // Get walkers from database
+    /** Get walkers from backend with API call
+     * 
+     * @returns Array of walkers
+     */
     async getWalkers(){
         const response = await fetch('../../api/getWalkers', {
             method: 'POST',
@@ -49,7 +58,11 @@ class ShowWalkers{
         return await response.json();
     }
 
-    // Offer job to walker
+    /** Offer job to walker
+     * 
+     * @param {String} walkerID 
+     * @returns callback 
+     */
     async offerJob(walkerID){
         const response = await fetch('../../api/offerJob', {
             method: 'POST',

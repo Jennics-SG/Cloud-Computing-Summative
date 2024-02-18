@@ -12,8 +12,6 @@ const JobModel = require('../database/models/job')
 const mongoose = require('mongoose');
 require('dotenv');
 
-// TODO go through and return from funcs early if param missing
-
 class Manager{
     static connect(){
         const mongoDB = process.env.CONNECT;

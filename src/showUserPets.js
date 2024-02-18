@@ -7,16 +7,13 @@
 import * as Tokens from '../../static/tokens.js'
 
 class showUserPets{
+    // Get the DIV for UI elems
     constructor(){
-        // Get user from localstorage
-        this.user = JSON.parse(localStorage.getItem('userauth'));
-        
-        // Get div for UI elements
         this.div = document.getElementById('dogs');
         this.init();
     }
 
-    // Get dogs and create UI elem for each
+    /** @description Get list of dogs and create UI elem for it */
     async init(){
         this.dogs = await this.getDogs();
         for(const dog of this.dogs){
@@ -25,7 +22,7 @@ class showUserPets{
         }
     }
 
-    // Get dogs from database
+    /** @description Get dogs from database */
     async getDogs(){
         // Get object of dogs from backend
         const response = await fetch('../../api/getPets', {
@@ -36,12 +33,17 @@ class showUserPets{
             },
         });
 
+        // Generate new access and try again if unauthorised
         if(response.status != 200) Tokens.genToken(_=> this.getDogs());
 
         return await response.json();
     }
 
-    // Make UI elem to hold dog
+    /** @description Make the UI elem for information
+     * 
+     * @param {String} dog  Information to be shown
+     * @returns HTML Label Element with information
+     */
     makeUIElem(dog){
         const cont = document.createElement('label');
         cont.id = "cont";

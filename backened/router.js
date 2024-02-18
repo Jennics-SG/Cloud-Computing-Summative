@@ -29,9 +29,7 @@ class Router{
 
     // All get routes
     routeGet(){
-        // Home routes, redirect to /home/:display
         this.app.get('/', (req, res) => {
-            // TODO Use cookie to tell if user has account
             res.redirect('/lsu/signup');
         });
 
@@ -72,6 +70,7 @@ class Router{
     // API post routes
     routeApi(){
         // Return account type
+        // Possibly redundant??
         this.app.post('/api/ownerwalker', async (req, res) => {
             const data = req.body;
 
@@ -161,6 +160,7 @@ class Router{
             res.send(JSON.stringify(jobDetails));
         });
 
+        // Accept an offered job
         this.app.post('/api/acceptJob', this.verifyAuth, async (req, res) => {
             const data = req.body;
 
@@ -185,33 +185,12 @@ class Router{
         });
     }
 
-    // Middleware for verifying auth
-    // Passes userID to function
-    async verifyAuth(req, res, next){
-        const token = JSON.parse(req.header('Authorisation'));
-
-        if(!token){
-            res.sendStatus(401); // Unauthorised
-            return;
-        }
-
-        const data = await JWT.verifyToken(process.env.ACCESS_SECRET, token)
-        .catch(e => {
-            res.sendStatus(401);
-            return;
-        });
-
-        req.userID = data.data.id
-        next();
-        return;
-    }
-
+    // Auth routes
     routeAuth(){
         // Sign user up to database
         this.app.post('/auth/newuser', async (req, res) => {
             const data = req.body
 
-            // Using await to make sure func finished before continuing
             const newUser = new CreateAccount(data);
             const accountID = await newUser.save();
 
@@ -232,7 +211,6 @@ class Router{
         this.app.post('/auth/userlogin', async (req, res) => {
             const data = req.body;
 
-            // Using await to make sure func finished before continuing
             const login = new VerifyLogin(data);
             const credData = await login.verify();
 
@@ -288,7 +266,6 @@ class Router{
             }); 
 
             // Send data to frontend
-            res.set('Content-Type', 'application/JSON');
             res.send(JSON.stringify(data)); // Authorised
         });
 
@@ -301,7 +278,6 @@ class Router{
             // Decode refresh to get user ID
             const data = await JWT.verifyToken(process.env.REFRESH_SECRET, refresh)
             .catch( e =>{
-                console.log(e);
                 res.sendStatus(401);    // Unauthorised
                 return;
             });
@@ -325,6 +301,7 @@ class Router{
             res.send(JSON.stringify(access));   // Authorised
         });
 
+        // Remove refresh token from cred
         this.app.post('/auth/removeRefresh', async (req, res) => {
             const { userID } = req.body;
             
@@ -336,6 +313,27 @@ class Router{
             cred.save();
             res.sendStatus(200);
         });
+    }
+
+    // Middleware for verifying auth
+    // Passes userID to function
+    async verifyAuth(req, res, next){
+        const token = JSON.parse(req.header('Authorisation'));
+
+        if(!token){
+            res.sendStatus(401); // Unauthorised
+            return;
+        }
+
+        const data = await JWT.verifyToken(process.env.ACCESS_SECRET, token)
+        .catch(e => {
+            res.sendStatus(401); // Unauthorised
+            return;
+        });
+
+        req.userID = data.data.id;
+        next(); // Authorised
+        return;
     }
 
     // Send all files in a directory

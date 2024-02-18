@@ -5,7 +5,9 @@
  */
 import * as Tokens from '../../static/tokens.js'
 
-class onReady{
+// Class holding code for submitting pet
+class SubmitPet{
+    /** Initialise document elements & listners */
     constructor(){
         // Divs for tabs
         this.YourDogs = document.getElementById('YourDogs');
@@ -23,7 +25,10 @@ class onReady{
         addDogBtn.addEventListener('click', this.addPet.bind(this));
     }
 
-    // Change tab to correct one
+    /** @description Change Tab shown to user
+     * 
+     * @param {String} tab  name of tab to be shown 
+     */
     changeTab(tab){
         this.YourDogs.style.display = tab == 'yourDogs' ?
             'flex' : 'none';
@@ -31,7 +36,11 @@ class onReady{
             'flex' : 'none';
     }
 
-    // Send pet data to backend
+    /** Add new pet to the databse via API call
+     * 
+     * @returns used to exit function when unauthorised
+     *          and regen refresh when needed
+     */
     async addPet(){
         // Get pet name & Size
         const data = {
@@ -61,12 +70,12 @@ class onReady{
         if(response.status == 503){ 
             this.showUser('Error Saving Pet');
             return;
-        } else if(response.status != 200) return Tokens.genToken(_=> this.addPet());
+        } else if(response.status != 200) return Tokens.genToken(_=> this.addPet());    // Regen refresh
         
         this.showUser('Pet saved successfully', false);
     }
 
-    // Show user a message
+    /** Show user a message */
     showUser(message, err = true){
         const textElem = document.getElementById('showUser');
 
@@ -79,4 +88,4 @@ class onReady{
     
 }
 
-document.addEventListener('DOMContentLoaded', new onReady)
+document.addEventListener('DOMContentLoaded', new SubmitPet)
