@@ -10,11 +10,10 @@ const CredsModel = require('../database/models/userCred');
 const JobModel = require('../database/models/job')
 
 const mongoose = require('mongoose');
-require('dotenv');
 
 class Manager{
     static connect(){
-        const mongoDB = process.env.CONNECT;
+        const mongoDB = process.env['CONNECT'];
 
         // Set up default conn
         mongoose.connect(mongoDB);

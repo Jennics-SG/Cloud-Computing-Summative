@@ -11,7 +11,6 @@ const favicon = require('serve-favicon');
 
 //const Router = require('./backened/router');
 const Router = require('./backened/routes/index')
-const Database = require('./backened/database/database');
 
 // Class containing server code
 class Server{

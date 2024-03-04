@@ -12,7 +12,7 @@ class StaticRedirect{
     // Get URL
     constructor(){
         this.url = window.location.href;
-        this.init();
+        //this.init();
     }
 
     /** Initialise & run static redirects
