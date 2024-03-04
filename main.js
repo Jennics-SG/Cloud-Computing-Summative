@@ -8,8 +8,10 @@ const express = require('express');
 const cookie = require('cookie-parser')
 const path = require('path');
 const favicon = require('serve-favicon');
-const Router = require('./backened/router');
-const Database = require('./backened/Database/database');
+
+//const Router = require('./backened/router');
+const Router = require('./backened/routes/index')
+const Database = require('./backened/database/database');
 
 // Class containing server code
 class Server{
@@ -33,15 +35,24 @@ class Server{
         // JSON middleware
         this.app.use(express.json());
 
-        // Initialise router and call runtime
-        this.router = new Router(this.app);
+        // Initialise routes
+        this.app.use('/lsu', Router.LSU);
+        this.app.use('/walker', Router.Walker);
+        this.app.use('/owner', Router.Owner);
+        this.app.use('/static', Router.Static);
+        
         this.runtime();
     }
 
     // Server runtime
     runtime(){
         // Establish Database Connection
-        Database.manager.connect();
+        //Database.manager.connect();
+
+        // Redirect root page to LSU
+        this.app.get('/', (req, res) => {
+            res.redirect('/lsu');
+        });
 
         // Set server to liten on port
         this.app.listen(this.port, _=> {

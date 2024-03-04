@@ -74,4 +74,4 @@ class StaticRedirect{
     }
 }
 
-new StaticRedirect
+//new StaticRedirect

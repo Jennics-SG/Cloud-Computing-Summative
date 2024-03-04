@@ -29,38 +29,6 @@ class Router{
 
     // All get routes
     routeGet(){
-        this.app.get('/', (req, res) => {
-            res.redirect('/lsu/signup');
-        });
-
-        this.app.get('/lsu', (req, res) => {
-            res.redirect('/lsu/login');
-        })
-
-        this.app.get('/lsu/:display', (req, res) => {
-            console.log('User connected to home');
-            res.render('pages/lsu', {display: req.display});
-        })
-
-        this.app.get('/home', (req, res) => {
-            res.redirect('/home/owner/findWalk');
-        })
-
-        this.app.get('/home/owner', (req, res) => {
-            res.redirect('/home/owner/findWalk')
-        })
-
-        this.app.get('/home/owner/findWalk', (req, res) => {
-            res.render('pages/findWalker')
-        })
-
-        this.app.get('/home/owner/pets', (req, res) => {
-            res.render('pages/pets');
-        })
-        
-        this.app.get('/home/walker', (req, res) =>{
-            res.render('pages/walker');
-        })
 
         // Send directories with files
         this.sendDir(path.join(__dirname, '../static'));
@@ -334,21 +302,6 @@ class Router{
         req.userID = data.data.id;
         next(); // Authorised
         return;
-    }
-
-    // Send all files in a directory
-    // does NOT send subdirectories
-    sendDir(dir){
-        if(!dir)
-        return;
-
-        const files = fs.readdirSync(dir);
-
-        for(const file of files){
-            this.app.get(`/static/${file}`, (req, res) => {
-                res.sendFile(path.join(dir, `${file}`));
-            });
-        }
     }
 }
 
