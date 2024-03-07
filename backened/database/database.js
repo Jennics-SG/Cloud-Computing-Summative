@@ -4,9 +4,9 @@
  *  Date:   13/02/24
  */
 
-const PetModel = require('../database/models/pet');
-const AccountModel = require('../database/models/account');
-const CredsModel = require('../database/models/userCred');
+const PetModel = require('./models/pet');
+const AccountModel = require('./models/account');
+const CredsModel = require('./models/userCred');
 const JobModel = require('../database/models/job')
 
 const mongoose = require('mongoose');

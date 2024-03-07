@@ -214,6 +214,8 @@ class Router{
             const login = new VerifyLogin(data);
             const credData = await login.verify();
 
+            console.log(credData);
+
             // If no account found return
             if(!credData){
                 console.log('Account not found');
@@ -273,8 +275,10 @@ class Router{
         this.app.post('/auth/createToken', async (req, res) => {
             const refresh = req.cookies.jwt;
 
-            if(!refresh) res.sendStatus(401);   // Unauthorised
-
+            if(!refresh){
+                res.sendStatus(401);   // Unauthorised
+                return
+            }
             // Decode refresh to get user ID
             const data = await JWT.verifyToken(process.env.REFRESH_SECRET, refresh)
             .catch( e =>{

@@ -9,7 +9,7 @@ const cookie = require('cookie-parser')
 const path = require('path');
 const favicon = require('serve-favicon');
 const Router = require('./backened/router');
-const Database = require('./backened/Database/database');
+const Database = require('./backened/database/database');
 
 // Class containing server code
 class Server{
