@@ -72,7 +72,7 @@ class loginSignUp{
             return;
         }
 
-        const response = await fetch('../auth/newuser', {
+        const response = await fetch('http://127.0.0.1:7071/api/auth/NewUser', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"

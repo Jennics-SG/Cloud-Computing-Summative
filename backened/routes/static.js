@@ -19,7 +19,7 @@ class StaticRoutes{
     // Base route is '/static'
     initRoutes(){
         this.sendDir(path.join(__dirname, '../../static'));
-        //this.sendDir(path.join(__dirname, '../../src'));
+        this.sendDir(path.join(__dirname, '../../src'));
     }
 
     // Send all files in a directory

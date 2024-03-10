@@ -12,11 +12,17 @@ const JobModel = require('../database/models/job')
 const mongoose = require('mongoose');
 
 class Manager{
+    // Returns false if conn failed
+    // Return true if conn success
     static connect(){
         const mongoDB = process.env['CONNECT'];
 
         // Set up default conn
-        mongoose.connect(mongoDB);
+        mongoose.connect(mongoDB)
+            .catch(e => {
+                console.error(e)
+                return false;
+            });
 
         this.db = mongoose.connection;
 
@@ -27,6 +33,8 @@ class Manager{
         this.db.on('reconnected', () => console.log('Database reconnected'));
         this.db.on('disconnecting', () => console.log('Database disconnecting'));
         this.db.on('close', () => console.log('Database close'));
+
+        return true
     }
 
     static getAccountModel(data){

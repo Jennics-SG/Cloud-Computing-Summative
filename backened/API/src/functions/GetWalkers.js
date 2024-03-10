@@ -9,11 +9,13 @@ app.http('GetWalkers', {
         context.log('Getting Walkers from Database')
 
         // Connect to database
-        try {Database.manager.connect()}
-        catch (e) {
-            context.error(e);
-            return { status: 500, body: "Database connection issue" };
-        }
+        // This apparently does nothing even if its not connected properly
+        // Originally done in a try/catch but the catch wasnt working so now
+        // Checking if database connection is false
+        const connected = Database.manager.connect();
+
+        if(!connected)
+            return {status: 500}    // Database conn failed
 
         let result;
 
@@ -23,10 +25,10 @@ app.http('GetWalkers', {
         }
         catch (e) {
             context.error(e);
-            return { status: 500, body: "Database Issue" };
+            return { status: 500, body: "Database Issue" };     // Info retrieval failed
         };
 
         // Return results here
-        return { status: 200, body: result }
+        return { status: 200, body: result }    // Success
     }
 });

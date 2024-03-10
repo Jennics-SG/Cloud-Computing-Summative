@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "dev": "npx nodemon",
     "start": "func start",
     "test": "echo \"No tests yet...\""
   },
@@ -11,7 +12,8 @@
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
-    "mongoose": "^8.2.0"
+    "mongoose": "^8.2.0",
+    "nodemon": "^3.1.0"
   },
   "main": "src/functions/*.js"
 }
