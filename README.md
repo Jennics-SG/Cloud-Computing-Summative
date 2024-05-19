@@ -9,17 +9,17 @@ At current the login system is insecure due to storing access token in localStor
 - Maybe jwt in cloud aswell
 
 ## Usage
-The web app should be available on:
+The web app should be available on: jjhwagly.azurewebsites.net
 
 Current Logins:
 Walker:
 ```asgl
-    Username: Walker
+    Username: walker
     Password: pass
 ```
 Owner:
 ``` asgl
-    Username: Owner
+    Username: owner
     Password: pass
 ```
 
