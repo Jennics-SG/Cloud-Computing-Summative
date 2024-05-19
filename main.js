@@ -8,8 +8,7 @@ const express = require('express');
 const cookie = require('cookie-parser')
 const path = require('path');
 const favicon = require('serve-favicon');
-const Router = require('./backened/router/index')
-const APIRouter = require('./backened/router');
+const Router = require('./backened/router');
 const Database = require('./backened/database/database');
 
 // Class containing server code
@@ -35,13 +34,7 @@ class Server{
         this.app.use(express.json());
 
         // Initialise router and call runtime
-        this.app.use('/lsu', Router.LSU);
-        this.app.use('/walker', Router.Walker);
-        this.app.use('/owner', Router.Owner);
-        this.app.use('/static', Router.Static);
-
-        this.app.use('lsu')
-        this.router = new APIRouter(this.app);
+        this.router = new Router(this.app);
         this.runtime();
     }
 

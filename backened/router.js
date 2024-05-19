@@ -27,6 +27,46 @@ class Router{
         this.routeAuth();
     }
 
+    // All get routes
+    routeGet(){
+        this.app.get('/', (req, res) => {
+            res.redirect('/lsu/signup');
+        });
+
+        this.app.get('/lsu', (req, res) => {
+            res.redirect('/lsu/login');
+        })
+
+        this.app.get('/lsu/:display', (req, res) => {
+            console.log('User connected to home');
+            res.render('pages/lsu', {display: req.display});
+        })
+
+        this.app.get('/home', (req, res) => {
+            res.redirect('/home/owner/findWalk');
+        })
+
+        this.app.get('/home/owner', (req, res) => {
+            res.redirect('/home/owner/findWalk')
+        })
+
+        this.app.get('/home/owner/findWalk', (req, res) => {
+            res.render('pages/findWalker')
+        })
+
+        this.app.get('/home/owner/pets', (req, res) => {
+            res.render('pages/pets');
+        })
+        
+        this.app.get('/home/walker', (req, res) =>{
+            res.render('pages/walker');
+        })
+
+        // Send directories with files
+        this.sendDir(path.join(__dirname, '../static'));
+        this.sendDir(path.join(__dirname, '../src'));
+    }
+
     // API post routes
     routeApi(){
         // Return account type
