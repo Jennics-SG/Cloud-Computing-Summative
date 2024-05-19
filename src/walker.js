@@ -28,8 +28,6 @@ class Walker{
     async init(){
         const jobs = await this.getJobsOffers();
 
-        console.log(jobs);
-
         // Div holding offers
         const offerCont = document.createElement('div');
         offerCont.id = "offerCont";

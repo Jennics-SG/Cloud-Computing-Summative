@@ -73,7 +73,6 @@ class Account{
 
     // Adds LoginCred to database
     async addCreds(data){
-        console.log(data.pass)
 
         // Encrypt pass
         data.pass = await Encrypt.encryptPass(data.pass);

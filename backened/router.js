@@ -213,9 +213,7 @@ class Router{
 
             const login = new VerifyLogin(data);
             const credData = await login.verify();
-
-            console.log(credData);
-
+            
             // If no account found return
             if(!credData){
                 console.log('Account not found');
